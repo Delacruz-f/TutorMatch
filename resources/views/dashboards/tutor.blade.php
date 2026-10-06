@@ -1,34 +1,149 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Tutor')
+@section('title', 'Panel del Tutor')
 
 @section('content')
-<div class="bg-white p-6 rounded-lg shadow-md">
-    <h1 class="text-3xl font-bold text-gray-800 mb-4">Panel de Tutor</h1>
-    <p class="text-gray-600">Bienvenido, {{ Auth::user()->nombre }}.</p>
 
-    @if(!Auth::user()->tutor)
-        <div class="mt-6 p-6 bg-blue-50 border-l-4 border-blue-500 rounded">
-            <h2 class="text-xl font-semibold text-blue-800 mb-2">Completa tu perfil de tutor</h2>
-            <p class="text-blue-700 mb-4">Para empezar a recibir solicitudes de clases, necesitas completar tu perfil y subir tus documentos.</p>
-            <a href="{{ route('tutor.register.form') }}"
-               class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-                Completar Perfil
-            </a>
-        </div>
-    @elseif(Auth::user()->tutor->aprobacion === 'pendiente')
-        <div class="mt-6 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
-            <p><strong>⏳ Perfil en revisión:</strong> Tu solicitud está siendo evaluada por el administrador.</p>
-        </div>
-    @elseif(Auth::user()->tutor->aprobacion === 'rechazado')
-        <div class="mt-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
-            <p><strong>❌ Perfil rechazado:</strong> {{ Auth::user()->tutor->motivo_rechazo }}</p>
-            <a href="{{ route('tutor.register.form') }}" class="text-red-800 underline mt-2 inline-block">Volver a intentar</a>
-        </div>
-    @else
-        <div class="mt-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700">
-            <p><strong>✅ Perfil aprobado:</strong> Ya puedes recibir solicitudes de clases.</p>
-        </div>
-    @endif
+<div class="glass rounded-2xl p-6 text-white mb-6"> <h1 class="text-3xl font-bold mb-1">Panel del Tutor</h1> <p class="text-white/80">Bienvenido, {{ Auth::user()->nombre }} 👨‍🏫</p> </div>
+
+@if(!Auth::user()->tutor)
+
+<div class="glass rounded-2xl p-6 text-white border-l-4 border-blue-400">
+    <h2 class="text-xl font-bold mb-2">📋 Completa tu perfil</h2>
+
+    <p class="text-white/80 mb-4">
+        Para empezar a recibir solicitudes, completa tu perfil y sube tus documentos.
+    </p>
+
+    <a href="{{ route('tutor.register.form') }}"
+       class="inline-block bg-white text-brand-600 px-6 py-3 rounded-xl font-bold hover:bg-white/90 transition">
+        Completar Perfil →
+    </a>
 </div>
+
+
+@elseif(Auth::user()->tutor->aprobacion === 'pendiente')
+
+<div class="glass rounded-2xl p-6 text-white border-l-4 border-yellow-400">
+    <p class="text-lg">
+        <strong>⏳ Perfil en revisión</strong>
+    </p>
+
+    <p class="text-white/80 mt-1">
+        Tu solicitud está siendo evaluada por el administrador.
+    </p>
+</div>
+
+
+@elseif(Auth::user()->tutor->aprobacion === 'rechazado')
+
+<div class="glass rounded-2xl p-6 text-white border-l-4 border-red-400">
+    <p class="text-lg">
+        <strong>❌ Perfil rechazado</strong>
+    </p>
+
+    <p class="text-white/80 mt-1">
+        Motivo: {{ Auth::user()->tutor->motivo_rechazo }}
+    </p>
+
+    <a href="{{ route('tutor.register.form') }}"
+       class="inline-block mt-3 underline text-white">
+        Volver a intentar
+    </a>
+</div>
+
+
+@else
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+
+    {{-- Mis Clases --}}
+    <a href="{{ route('tutor.dashboard') }}"
+       class="glass rounded-2xl p-6 text-white hover:bg-white/25 transition group">
+
+        <div class="text-4xl mb-3 group-hover:scale-110 transition">
+            📊
+        </div>
+
+        <h3 class="font-bold">
+            Mis Clases
+        </h3>
+
+        <p class="text-sm text-white/70">
+            Acepta o completa clases
+        </p>
+    </a>
+
+    {{-- Retiros --}}
+    <a href="{{ route('tutor.retiros.index') }}"
+       class="glass rounded-2xl p-6 text-white hover:bg-white/25 transition group">
+
+        <div class="text-4xl mb-3 group-hover:scale-110 transition">
+            💰
+        </div>
+
+        <h3 class="font-bold">
+            Retiros
+        </h3>
+
+        <p class="text-sm text-white/70">
+            Solicita tu dinero
+        </p>
+    </a>
+
+    {{-- Suscripción --}}
+    <a href="{{ route('tutor.suscripciones.index') }}"
+       class="glass rounded-2xl p-6 text-white hover:bg-white/25 transition group">
+
+        <div class="text-4xl mb-3 group-hover:scale-110 transition">
+            ⭐
+        </div>
+
+        <h3 class="font-bold">
+            Suscripción
+        </h3>
+
+        <p class="text-sm text-white/70">
+            Aparece destacado
+        </p>
+    </a>
+
+    {{-- Disponibilidad --}}
+    <a href="{{ route('tutor.disponibilidad.index') }}"
+       class="glass rounded-2xl p-6 text-white hover:bg-white/25 transition group">
+
+        <div class="text-4xl mb-3 group-hover:scale-110 transition">
+            🕐
+        </div>
+
+        <h3 class="font-bold">
+            Disponibilidad
+        </h3>
+
+        <p class="text-sm text-white/70">
+            Configura tus horarios
+        </p>
+    </a>
+
+    {{-- Mis Reseñas --}}
+    <a href="{{ route('tutor.resenas.index') }}"
+       class="glass rounded-2xl p-6 text-white hover:bg-white/25 transition group">
+
+        <div class="text-4xl mb-3 group-hover:scale-110 transition">
+            ⭐
+        </div>
+
+        <h3 class="font-bold">
+            Mis Reseñas
+        </h3>
+
+        <p class="text-sm text-white/70">
+            Responde a tus estudiantes
+        </p>
+    </a>
+
+</div>
+
+
+@endif
 @endsection

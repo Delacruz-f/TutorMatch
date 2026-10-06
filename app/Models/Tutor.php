@@ -30,9 +30,54 @@ class Tutor extends Model
     {
         return $this->belongsToMany(Materia::class, 'materia_tutor', 'tutor_id', 'materia_id');
     }
+    public function clases()
+{
+    return $this->hasMany(Clase::class);
+}
+
+public function retiros()
+{
+    return $this->hasMany(Retiro::class);
+}
+
+public function resenas()
+{
+    return $this->hasMany(Resena::class);
+}
+
+/**
+ * Calcula el saldo disponible del tutor:
+ * Suma de monto_tutor de clases completadas y con pago liberado
+ * menos los retiros ya solicitados (pendientes o pagados).
+ */
+public function saldoDisponible()
+{
+    $ganado = $this->clases()
+        ->where('estado', 'completada')
+        ->where('pago_liberado', 1)
+        ->sum('monto_tutor');
+
+    $retirado = $this->retiros()
+        ->whereIn('estado', ['pendiente', 'pagado'])
+        ->sum('monto');
+
+    return round($ganado - $retirado, 2);
+}
 
     public function disponibilidades()
     {
         return $this->hasMany(Disponibilidad::class);
     }
+    public function suscripciones()
+{
+    return $this->hasMany(Suscripcion::class);
+}
+
+public function suscripcionActiva()
+{
+    return $this->hasOne(Suscripcion::class)
+        ->where('estado', 'activa')
+        ->where('fecha_fin', '>=', now()->toDateString())
+        ->latest();
+}
 }
