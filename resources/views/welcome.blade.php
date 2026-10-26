@@ -65,6 +65,7 @@
             50% { transform: translateY(-30px); }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('theme.css') }}">
 </head>
 <body class="text-white overflow-x-hidden">
 

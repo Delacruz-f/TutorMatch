@@ -42,6 +42,7 @@
             border-color: white;
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('theme.css') }}">
 </head>
 <body class="flex items-center justify-center p-4">
 

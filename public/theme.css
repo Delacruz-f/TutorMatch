@@ -1,0 +1,316 @@
+:root {
+    color-scheme: dark;
+    --tm-ink: #f8fafc;
+    --tm-muted: rgba(226, 232, 240, 0.76);
+    --tm-border: rgba(255, 255, 255, 0.2);
+    --tm-indigo: #a5b4fc;
+    --tm-teal: #5eead4;
+    --tm-violet: #c4b5fd;
+    --tm-orange: #fb923c;
+}
+
+html {
+    min-height: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+    background: #11100f;
+}
+
+body {
+    position: relative;
+    isolation: isolate;
+    min-height: 100vh;
+    max-width: 100%;
+    color: var(--tm-ink);
+    background:
+        radial-gradient(ellipse at 13% 18%, rgba(13, 148, 136, 0.16), transparent 34%),
+        radial-gradient(ellipse at 83% 18%, rgba(124, 58, 237, 0.17), transparent 35%),
+        linear-gradient(135deg, #11100f 0%, #17171b 42%, #141c22 72%, #17121b 100%);
+    background-attachment: fixed;
+    overflow-x: clip;
+}
+
+body::after {
+    position: fixed;
+    z-index: -2;
+    inset: 0;
+    background:
+        linear-gradient(115deg, rgba(8, 10, 14, 0.74), rgba(12, 14, 18, 0.54) 48%, rgba(11, 12, 16, 0.72)),
+        url("img/vestrahorn-mountains-stokksnes-iceland.jpg") center / cover no-repeat;
+    content: "";
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+body:has(nav.glass)::after {
+    background-image:
+        linear-gradient(115deg, rgba(8, 10, 14, 0.74), rgba(12, 14, 18, 0.54) 48%, rgba(11, 12, 16, 0.72)),
+        url("img/misurina-sunset.jpg");
+}
+
+body::before {
+    position: fixed;
+    z-index: -1;
+    inset: 0;
+    background: url("img/TUTORMATCH1.png") center 48% / min(68vw, 760px) auto no-repeat;
+    content: "";
+    filter: brightness(0) invert(1);
+    mix-blend-mode: screen;
+    opacity: 0.045;
+    pointer-events: none;
+}
+
+body > :not(.bubble) {
+    position: relative;
+    z-index: 0;
+}
+
+.glass,
+.glass-card,
+.glass-dark {
+    position: relative;
+    color: var(--tm-ink);
+    border: 1px solid var(--tm-border);
+    box-shadow:
+        0 24px 72px rgba(0, 0, 0, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.11);
+    -webkit-backdrop-filter: blur(28px) saturate(145%);
+    backdrop-filter: blur(28px) saturate(145%);
+}
+
+.glass {
+    background:
+        linear-gradient(125deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.025) 42%, rgba(251, 146, 60, 0.06)),
+        linear-gradient(145deg, rgba(35, 35, 39, 0.42), rgba(17, 20, 23, 0.3));
+}
+
+.glass-card {
+    background:
+        linear-gradient(125deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.025) 46%, rgba(94, 234, 212, 0.07)),
+        rgba(29, 30, 34, 0.36);
+}
+
+.glass-dark {
+    background:
+        linear-gradient(110deg, rgba(20, 20, 23, 0.68), rgba(25, 29, 32, 0.58)),
+        rgba(17, 18, 20, 0.54);
+}
+
+.glass-card:hover {
+    border-color: rgba(251, 146, 60, 0.4);
+    box-shadow:
+        0 28px 76px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.bubble {
+    max-width: min(55vw, 24rem);
+    max-height: min(55vw, 24rem);
+    background:
+        radial-gradient(circle at 34% 34%, rgba(255, 255, 255, 0.13), transparent 60%),
+        linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(251, 146, 60, 0.12));
+    filter: blur(1px);
+    opacity: 0.62;
+}
+
+.sidebar-item-active {
+    background: linear-gradient(100deg, rgba(251, 146, 60, 0.2), rgba(251, 146, 60, 0.055));
+    border-left-color: var(--tm-orange);
+}
+
+.input-glass {
+    color: var(--tm-ink);
+    background: rgba(10, 12, 15, 0.34);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 0.75rem;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.input-glass::placeholder {
+    color: rgba(226, 232, 240, 0.62);
+}
+
+.input-glass:focus {
+    color: #fff;
+    background: rgba(10, 12, 15, 0.7);
+    border-color: var(--tm-orange);
+    box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.18);
+}
+
+.input-glass option {
+    color: #1f2937;
+    background: #fff;
+}
+
+.glass :is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]):not(a):not(button):not(option):not([class*="bg-white"]),
+.glass-card :is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]):not(a):not(button):not(option):not([class*="bg-white"]),
+main :is(div, section, article)[class~="bg-white"] :is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]):not(a):not(button):not(option):not([class*="bg-white"]) {
+    color: rgba(248, 250, 252, 0.94);
+}
+
+.glass a:is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]):not([class*="bg-white"]),
+.glass-card a:is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]):not([class*="bg-white"]) {
+    color: rgba(248, 250, 252, 0.96);
+}
+
+main :is(div, section, article)[class~="bg-white"] {
+    color: var(--tm-ink);
+    border: 1px solid rgba(255, 255, 255, 0.19);
+    background:
+        linear-gradient(125deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.025) 50%, rgba(251, 146, 60, 0.055)),
+        rgba(27, 28, 31, 0.42);
+    box-shadow:
+        0 18px 52px rgba(0, 0, 0, 0.27),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    -webkit-backdrop-filter: blur(26px) saturate(145%);
+    backdrop-filter: blur(26px) saturate(145%);
+}
+
+:where(button, a, input, select, textarea):focus-visible {
+    outline: 3px solid rgba(251, 146, 60, 0.95);
+    outline-offset: 3px;
+}
+
+main button[type="submit"],
+.btn-primary,
+.btn-glass,
+.btn-white,
+.btn-yellow {
+    min-height: 44px;
+    font-weight: 700;
+    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+main button[type="submit"]:not(:disabled):hover,
+.btn-primary:hover,
+.btn-glass:hover,
+.btn-white:hover,
+.btn-yellow:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.04);
+}
+
+.btn-primary {
+    color: #fff;
+    background: linear-gradient(120deg, #ea580c, #f97316 54%, #c2410c);
+    box-shadow: 0 10px 26px rgba(234, 88, 12, 0.27);
+}
+
+.btn-glass,
+.btn-white {
+    color: #24140c;
+    background: linear-gradient(135deg, #fff7ed, #fed7aa);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.24);
+}
+
+.btn-yellow {
+    color: #25130a;
+    background: linear-gradient(135deg, #fdba74, #f97316);
+    box-shadow: 0 8px 22px rgba(234, 88, 12, 0.2);
+}
+
+.rol-card {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.025) 54%, rgba(251, 146, 60, 0.08)),
+        rgba(24, 25, 28, 0.4);
+    border-color: rgba(255, 255, 255, 0.24);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    backdrop-filter: blur(22px) saturate(140%);
+}
+
+.rol-card:hover,
+.rol-card.selected {
+    background:
+        linear-gradient(135deg, rgba(251, 146, 60, 0.25), rgba(255, 255, 255, 0.07)),
+        rgba(35, 29, 25, 0.57);
+    border-color: rgba(253, 186, 116, 0.7);
+}
+
+main {
+    min-width: 0;
+}
+
+main img {
+    max-width: 100%;
+}
+
+main table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+main th {
+    color: #ffedd5;
+    font-weight: 700;
+}
+
+main td,
+main th {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+main :is(input, select, textarea) {
+    max-width: 100%;
+}
+
+main :is(h1, h2, h3) {
+    text-wrap: balance;
+}
+
+main a:not(.btn-white):not(.btn-yellow):not(.btn-glass):not(.btn-primary) {
+    text-decoration-color: rgba(251, 146, 60, 0.55);
+    text-underline-offset: 0.2em;
+}
+
+@media (max-width: 640px) {
+    body {
+        background-attachment: scroll;
+    }
+
+    body::before {
+        background-size: min(92vw, 520px) auto;
+        background-position: center 40%;
+        opacity: 0.035;
+    }
+
+    body::after {
+        background-position: 58% center;
+        opacity: 0.7;
+    }
+
+    main {
+        padding: 0.875rem;
+    }
+
+    main table {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    .glass,
+    .glass-card,
+    .glass-dark {
+        -webkit-backdrop-filter: blur(18px) saturate(140%);
+        backdrop-filter: blur(18px) saturate(140%);
+    }
+
+    .bubble {
+        max-width: 46vw;
+        max-height: 46vw;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

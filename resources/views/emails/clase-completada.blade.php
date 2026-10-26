@@ -1,38 +1,21 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: Arial, sans-serif; background: #f3f4f6; padding: 20px; margin: 0; }
-        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; }
-        .header { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 30px; text-align: center; }
-        .header h1 { margin: 0; font-size: 24px; }
-        .body { padding: 30px; }
-        .stars { text-align: center; font-size: 40px; margin: 20px 0; }
-        .btn { display: inline-block; background: #6366f1; color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; }
-        .footer { background: #1f2937; color: #9ca3af; padding: 20px; text-align: center; font-size: 12px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🏁 ¡Clase completada!</h1>
-        </div>
-        <div class="body">
-            <p>Hola {{ $clase->estudiante->nombre }},</p>
-            <p>Tu clase de <strong>{{ $clase->materia->nombre }}</strong> con <strong>{{ $clase->tutor->user->nombre }}</strong> ha sido completada.</p>
+@extends('emails.layout')
 
-            <div class="stars">⭐⭐⭐⭐⭐</div>
+@section('email_title', 'Clase completada - TutorMatch')
+@section('heading', 'Tu clase ha sido completada')
 
-            <p style="text-align: center;">¿Cómo calificarías tu experiencia? Tu opinión ayuda a otros estudiantes.</p>
-
-            <p style="text-align: center; margin-top: 20px;">
-                <a href="{{ route('resenas.create', $clase->id) }}" class="btn">Dejar reseña</a>
-            </p>
-        </div>
-        <div class="footer">
-            TutorMatch © {{ date('Y') }}
-        </div>
+@section('content')
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.7;">Hola {{ $clase->estudiante->nombre }},</p>
+    <p style="margin:0 0 24px;font-size:15px;line-height:1.7;color:#4b5563;">
+        Tu clase de <strong>{{ $clase->materia->nombre }}</strong> con <strong>{{ $clase->tutor->user->nombre }}</strong> ha finalizado.
+    </p>
+    <div style="padding:18px 20px;margin-bottom:24px;border:1px solid #e0e7ff;border-radius:10px;background-color:#eef2ff;color:#3730a3;font-size:14px;line-height:1.7;text-align:center;">
+        Tu opinión ayuda a otros estudiantes a encontrar el tutor adecuado. Cuéntanos cómo fue tu experiencia.
     </div>
-</body>
-</html>
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 auto;">
+        <tr>
+            <td align="center" style="border-radius:10px;background-color:#4f46e5;">
+                <a href="{{ route('resenas.create', $clase->id) }}" style="display:inline-block;padding:13px 24px;border-radius:10px;color:#ffffff;text-decoration:none;font-size:14px;font-weight:bold;">Dejar una reseña</a>
+            </td>
+        </tr>
+    </table>
+@endsection

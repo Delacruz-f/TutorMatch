@@ -161,6 +161,7 @@
             box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('theme.css') }}">
 </head>
 
 <body class="font-sans antialiased min-h-screen text-gray-800">
@@ -187,8 +188,8 @@
                 href="{{ route('home') }}"
                 class="flex items-center gap-3 text-white">
 
-                <div class="w-10 h-10 bg-white/25 rounded-xl flex items-center justify-center font-bold text-xl">
-                    T
+                <div class="w-10 h-10 bg-white/25 rounded-xl flex items-center justify-center overflow-hidden">
+                    <img src="{{ asset('img/TUTORMATCH1.png') }}" alt="TutorMatch" class="w-full h-full object-contain">
                 </div>
 
                 <div>

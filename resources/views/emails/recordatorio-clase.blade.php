@@ -1,41 +1,26 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: Arial, sans-serif; background: #f3f4f6; padding: 20px; margin: 0; }
-        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; }
-        .header { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 30px; text-align: center; }
-        .header h1 { margin: 0; font-size: 24px; }
-        .body { padding: 30px; }
-        .info-box { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px; }
-        .info-box p { margin: 5px 0; }
-        .btn { display: inline-block; background: #f59e0b; color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 20px; }
-        .footer { background: #1f2937; color: #9ca3af; padding: 20px; text-align: center; font-size: 12px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>⏰ ¡Tu clase empieza pronto!</h1>
-        </div>
-        <div class="body">
-            <p>Hola {{ $clase->estudiante->nombre }},</p>
-            <p>Recuerda que tu clase comienza en <strong>30 minutos</strong>.</p>
+@extends('emails.layout')
 
-            <div class="info-box">
-                <p><strong>📚 Materia:</strong> {{ $clase->materia->nombre }}</p>
-                <p><strong>👨‍🏫 Tutor:</strong> {{ $clase->tutor->user->nombre }} {{ $clase->tutor->user->apellido }}</p>
-                <p><strong>🕐 Hora:</strong> {{ substr($clase->hora_inicio, 0, 5) }}</p>
-            </div>
+@section('email_title', 'Recordatorio de clase - TutorMatch')
+@section('heading', 'Tu clase comienza pronto')
 
-            <p>Puedes entrar a la sala de videollamada desde 5 minutos antes.</p>
-
-            <p style="text-align: center;">
-                <a href="{{ route('clases.sala', $clase->id) }}" class="btn">Entrar a la sala</a>
-            </p>
-        </div>
-        <div class="footer">TutorMatch © {{ date('Y') }}</div>
+@section('content')
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.7;">Hola {{ $clase->estudiante->nombre }},</p>
+    <p style="margin:0 0 20px;font-size:15px;line-height:1.7;color:#4b5563;">
+        Te recordamos que tu clase comienza en aproximadamente 30 minutos.
+    </p>
+    <div style="padding:18px 20px;margin-bottom:22px;border:1px solid #e5e7eb;border-radius:10px;background-color:#f9fafb;font-size:14px;line-height:1.9;">
+        <strong>Materia:</strong> {{ $clase->materia->nombre }}<br>
+        <strong>Tutor:</strong> {{ $clase->tutor->user->nombre }} {{ $clase->tutor->user->apellido }}<br>
+        <strong>Hora:</strong> {{ substr($clase->hora_inicio, 0, 5) }}
     </div>
-</body>
-</html>
+    <p style="margin:0 0 22px;font-size:14px;line-height:1.7;color:#4b5563;">
+        La sala estará disponible cinco minutos antes de la hora programada.
+    </p>
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 auto;">
+        <tr>
+            <td align="center" style="border-radius:10px;background-color:#4f46e5;">
+                <a href="{{ route('clases.sala', $clase->id) }}" style="display:inline-block;padding:13px 24px;border-radius:10px;color:#ffffff;text-decoration:none;font-size:14px;font-weight:bold;">Entrar a la sala</a>
+            </td>
+        </tr>
+    </table>
+@endsection

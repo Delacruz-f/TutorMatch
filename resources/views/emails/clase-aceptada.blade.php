@@ -1,42 +1,27 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: Arial, sans-serif; background: #f3f4f6; padding: 20px; margin: 0; }
-        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; }
-        .header { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 30px; text-align: center; }
-        .header h1 { margin: 0; font-size: 24px; }
-        .body { padding: 30px; }
-        .info-box { background: #f3f4f6; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0; border-radius: 4px; }
-        .info-box p { margin: 5px 0; }
-        .btn { display: inline-block; background: #10b981; color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 20px; }
-        .footer { background: #1f2937; color: #9ca3af; padding: 20px; text-align: center; font-size: 12px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>✅ ¡Tu clase fue aceptada!</h1>
-        </div>
-        <div class="body">
-            <p>Hola {{ $clase->estudiante->nombre }},</p>
-            <p>Buenas noticias: <strong>{{ $clase->tutor->user->nombre }} {{ $clase->tutor->user->apellido }}</strong> aceptó tu solicitud de clase.</p>
+@extends('emails.layout')
 
-            <div class="info-box">
-                <p><strong>📚 Materia:</strong> {{ $clase->materia->nombre }}</p>
-                <p><strong>📅 Fecha:</strong> {{ $clase->fecha->format('d/m/Y') }}</p>
-                <p><strong>🕐 Hora:</strong> {{ substr($clase->hora_inicio, 0, 5) }} - {{ substr($clase->hora_fin, 0, 5) }}</p>
-                <p><strong>💻 Sala:</strong> Jitsi (link disponible 5 min antes)</p>
-            </div>
+@section('email_title', 'Tu clase fue aceptada - TutorMatch')
+@section('heading', 'Tu clase fue aceptada')
 
-            <p>Puedes entrar a la sala de videollamada <strong>5 minutos antes</strong> de la hora programada.</p>
-
-            <a href="{{ route('clases.sala', $clase->id) }}" class="btn">Ir a la sala Jitsi</a>
-        </div>
-        <div class="footer">
-            TutorMatch © {{ date('Y') }} — Plataforma de tutorías
-        </div>
+@section('content')
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.7;">Hola {{ $clase->estudiante->nombre }},</p>
+    <p style="margin:0 0 20px;font-size:15px;line-height:1.7;color:#4b5563;">
+        <strong>{{ $clase->tutor->user->nombre }} {{ $clase->tutor->user->apellido }}</strong> aceptó tu solicitud de clase.
+    </p>
+    <div style="padding:18px 20px;margin-bottom:22px;border:1px solid #e5e7eb;border-radius:10px;background-color:#f9fafb;font-size:14px;line-height:1.9;">
+        <strong>Materia:</strong> {{ $clase->materia->nombre }}<br>
+        <strong>Fecha:</strong> {{ $clase->fecha->format('d/m/Y') }}<br>
+        <strong>Hora:</strong> {{ substr($clase->hora_inicio, 0, 5) }} - {{ substr($clase->hora_fin, 0, 5) }}<br>
+        <strong>Sala:</strong> El enlace estará disponible 5 minutos antes de la clase.
     </div>
-</body>
-</html>
+    <p style="margin:0 0 22px;font-size:14px;line-height:1.7;color:#4b5563;">
+        Puedes entrar a la videollamada cinco minutos antes de la hora programada.
+    </p>
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 auto;">
+        <tr>
+            <td align="center" style="border-radius:10px;background-color:#4f46e5;">
+                <a href="{{ route('clases.sala', $clase->id) }}" style="display:inline-block;padding:13px 24px;border-radius:10px;color:#ffffff;text-decoration:none;font-size:14px;font-weight:bold;">Ir a la sala</a>
+            </td>
+        </tr>
+    </table>
+@endsection

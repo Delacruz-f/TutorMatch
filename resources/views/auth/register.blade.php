@@ -59,6 +59,7 @@
             50% { transform: translateY(-20px); }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('theme.css') }}">
 </head>
 <body class="flex items-center justify-center p-4 py-8 overflow-x-hidden">
 
@@ -68,8 +69,8 @@
     <div class="glass-card rounded-3xl p-8 sm:p-10 w-full max-w-lg relative z-10 text-white my-8">
 
         <div class="flex flex-col items-center mb-8">
-            <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center text-3xl font-bold mb-4 border border-white/30">
-                T
+            <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center mb-4 border border-white/30 overflow-hidden">
+                <img src="{{ asset('img/TUTORMATCH1.png') }}" alt="TutorMatch" class="w-full h-full object-contain">
             </div>
             <h1 class="text-3xl font-bold">Crear Cuenta</h1>
             <p class="text-white/70 text-sm mt-1">Únete a TutorMatch</p>

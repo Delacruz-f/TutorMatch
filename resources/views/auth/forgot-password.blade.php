@@ -35,6 +35,7 @@
             outline: none;
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('theme.css') }}">
 </head>
 <body class="flex items-center justify-center p-4">
     <div class="glass-card rounded-3xl p-10 w-full max-w-md text-white">
