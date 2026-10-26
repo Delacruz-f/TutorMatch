@@ -83,11 +83,17 @@
             @csrf
             @method('PUT')
 
-            <div>
-                <label class="block text-sm font-medium mb-2">Contraseña actual</label>
-                <input type="password" name="current_password" required
-                       class="w-full px-4 py-3 rounded-xl bg-white/15 border border-white/30 text-white focus:bg-white/25 focus:outline-none">
-            </div>
+            @if(Auth::user()->google_id)
+                <p class="text-sm text-white/80">
+                    Iniciaste sesión con Google. Para establecer una contraseña, solo necesitas ingresar una nueva.
+                </p>
+            @else
+                <div>
+                    <label class="block text-sm font-medium mb-2">Contraseña actual</label>
+                    <input type="password" name="current_password" required
+                           class="w-full px-4 py-3 rounded-xl bg-white/15 border border-white/30 text-white focus:bg-white/25 focus:outline-none">
+                </div>
+            @endif
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium mb-2">Nueva contraseña</label>
@@ -103,6 +109,23 @@
 
             <button type="submit" class="bg-white text-brand-600 px-6 py-3 rounded-xl font-bold hover:bg-white/90 transition">
                 Cambiar contraseña
+            </button>
+        </form>
+    </div>
+
+    <div class="glass rounded-2xl p-6 text-white mt-6">
+        <h2 class="text-xl font-bold mb-2">Eliminar cuenta</h2>
+        <p class="text-sm text-white/80 mb-4">
+            Esta acción es permanente y cerrará tu sesión.
+        </p>
+
+        <form method="POST" action="{{ route('perfil.destroy') }}"
+              onsubmit="return confirm('¿Quieres eliminar tu cuenta? Esta acción no se puede deshacer.');">
+            @csrf
+            @method('DELETE')
+
+            <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-700 transition">
+                Eliminar mi cuenta
             </button>
         </form>
     </div>

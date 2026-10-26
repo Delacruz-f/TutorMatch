@@ -272,6 +272,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/perfil/password', [PerfilController::class, 'updatePassword'])
         ->name('perfil.password');
 
+    // Eliminar la cuenta del usuario autenticado
+    Route::delete('/perfil', [PerfilController::class, 'destroy'])
+        ->name('perfil.destroy');
+
     /*
     |--------------------------------------------------------------------------
     | Logout

@@ -48,14 +48,18 @@ class PerfilController extends Controller
 
     public function updatePassword(Request $request)
     {
-        $request->validate([
-            'current_password' => 'required',
-            'password' => ['required', 'confirmed', Password::min(8)],
-        ]);
-
         $user = Auth::user();
+        $rules = [
+            'password' => ['required', 'confirmed', Password::min(8)],
+        ];
 
-        if (!Hash::check($request->current_password, $user->password)) {
+        if (!$user->google_id) {
+            $rules['current_password'] = 'required';
+        }
+
+        $request->validate($rules);
+
+        if (!$user->google_id && !Hash::check($request->current_password, $user->password)) {
             return back()->withErrors(['current_password' => 'La contraseña actual no es correcta.']);
         }
 
@@ -64,5 +68,23 @@ class PerfilController extends Controller
         ]);
 
         return back()->with('success', 'Contraseña actualizada.');
+    }
+
+    public function destroy(Request $request)
+    {
+        $user = $request->user();
+        $foto = $user->foto;
+
+        $user->delete();
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        if ($foto) {
+            Storage::disk('public')->delete($foto);
+        }
+
+        return redirect()->route('login')->with('success', 'Tu cuenta ha sido eliminada.');
     }
 }
