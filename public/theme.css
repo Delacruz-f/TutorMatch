@@ -167,6 +167,112 @@ main :is(div, section, article)[class~="bg-white"] {
     backdrop-filter: blur(26px) saturate(145%);
 }
 
+main :is(div, section, article)[class~="bg-gray-50"],
+main :is(div, section, article)[class~="bg-yellow-50"],
+main :is(div, section, article)[class~="bg-green-50"],
+main :is(div, section, article)[class~="bg-red-50"],
+main :is(div, section, article)[class~="bg-blue-50"],
+main :is(div, section, article)[class~="bg-purple-50"],
+main :is(div, section, article)[class~="bg-indigo-50"],
+main :is(div, section, article)[class~="bg-amber-50"] {
+    color: var(--tm-ink);
+    border-color: rgba(255, 255, 255, 0.18);
+    background:
+        linear-gradient(125deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.025) 54%, rgba(251, 146, 60, 0.045)),
+        rgba(23, 26, 31, 0.48);
+    box-shadow: 0 16px 44px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(24px) saturate(145%);
+    backdrop-filter: blur(24px) saturate(145%);
+}
+
+main :is(div, section, article):is([class~="bg-gray-50"], [class~="bg-yellow-50"], [class~="bg-green-50"], [class~="bg-red-50"], [class~="bg-blue-50"], [class~="bg-purple-50"], [class~="bg-indigo-50"], [class~="bg-amber-50"]) :is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]) {
+    color: rgba(248, 250, 252, 0.9);
+}
+
+main :is(div, section, article)[class~="bg-green-100"],
+main :is(div, section, article)[class~="bg-emerald-100"] {
+    color: #d1fae5;
+    background-color: rgba(16, 185, 129, 0.2);
+    border-color: rgba(110, 231, 183, 0.38);
+}
+
+main :is(div, section, article)[class~="bg-red-100"] {
+    color: #fee2e2;
+    background-color: rgba(239, 68, 68, 0.2);
+    border-color: rgba(252, 165, 165, 0.38);
+}
+
+main :is(div, section, article)[class~="bg-yellow-100"],
+main :is(div, section, article)[class~="bg-amber-100"] {
+    color: #fef3c7;
+    background-color: rgba(245, 158, 11, 0.2);
+    border-color: rgba(252, 211, 77, 0.38);
+}
+
+main :is(div, section, article)[class~="bg-blue-100"],
+main :is(div, section, article)[class~="bg-indigo-100"] {
+    color: #dbeafe;
+    background-color: rgba(59, 130, 246, 0.2);
+    border-color: rgba(147, 197, 253, 0.38);
+}
+
+main :is(div, section, article)[class~="bg-gray-100"],
+main :is(div, section, article)[class~="bg-slate-100"] {
+    color: #f1f5f9;
+    background-color: rgba(148, 163, 184, 0.19);
+    border-color: rgba(203, 213, 225, 0.3);
+}
+
+main span[class~="bg-green-100"],
+main span[class~="bg-emerald-100"] {
+    color: #a7f3d0;
+    background-color: rgba(16, 185, 129, 0.2);
+}
+
+main span[class~="bg-red-100"] {
+    color: #fecaca;
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+main span[class~="bg-yellow-100"],
+main span[class~="bg-amber-100"] {
+    color: #fde68a;
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+main span[class~="bg-blue-100"],
+main span[class~="bg-indigo-100"] {
+    color: #bfdbfe;
+    background-color: rgba(59, 130, 246, 0.2);
+}
+
+main span[class~="bg-gray-100"],
+main span[class~="bg-slate-100"] {
+    color: #e2e8f0;
+    background-color: rgba(148, 163, 184, 0.19);
+}
+
+main :is(div, section, article)[class~="bg-green-100"] :is([class*="text-green-"], [class*="text-emerald-"]),
+main :is(div, section, article)[class~="bg-emerald-100"] :is([class*="text-green-"], [class*="text-emerald-"]) {
+    color: #a7f3d0;
+}
+
+main :is(div, section, article)[class~="bg-red-100"] [class*="text-red-"] {
+    color: #fecaca;
+}
+
+main :is(div, section, article):is([class~="bg-yellow-100"], [class~="bg-amber-100"]) :is([class*="text-yellow-"], [class*="text-amber-"]) {
+    color: #fde68a;
+}
+
+main :is(div, section, article):is([class~="bg-blue-100"], [class~="bg-indigo-100"]) :is([class*="text-blue-"], [class*="text-indigo-"]) {
+    color: #bfdbfe;
+}
+
+main :is(div, section, article):is([class~="bg-gray-100"], [class~="bg-slate-100"]) :is([class*="text-gray-"], [class*="text-slate-"]) {
+    color: #e2e8f0;
+}
+
 :where(button, a, input, select, textarea):focus-visible {
     outline: 3px solid rgba(251, 146, 60, 0.95);
     outline-offset: 3px;
