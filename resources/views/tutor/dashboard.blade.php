@@ -100,7 +100,7 @@
         <p class="text-gray-500">Sin historial aún.</p>
     @else
         <table class="w-full text-sm">
-            <thead class="bg-gray-100">
+            <thead class="text-gray-500">
                 <tr>
                     <th class="p-2 text-left">Fecha</th>
                     <th class="p-2 text-left">Estudiante</th>

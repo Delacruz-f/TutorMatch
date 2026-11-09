@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 use App\Http\Controllers\AuthController;
@@ -59,6 +60,9 @@ Route::middleware('auth')->group(function () {
         return view('auth.verify-email');
     })->name('verification.notice');
 
+    Route::post('/email/verification/skip', [AuthController::class, 'skipEmailVerification'])
+        ->name('verification.skip');
+
     // Cuando el usuario hace clic en el enlace del correo
     Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
 
@@ -73,7 +77,13 @@ Route::middleware('auth')->group(function () {
     // Reenviar el correo de verificación
     Route::post('/email/verification-notification', function (Request $request) {
 
-        $request->user()->sendEmailVerificationNotification();
+        try {
+            $request->user()->sendEmailVerificationNotification();
+        } catch (\Throwable $e) {
+            Log::error('Error enviando verificación: '.$e->getMessage());
+
+            return back()->with('error', 'No se pudo enviar el correo. Inténtalo más tarde.');
+        }
 
         return back()->with(
             'success',
@@ -82,6 +92,10 @@ Route::middleware('auth')->group(function () {
 
     })->middleware(['throttle:6,1'])->name('verification.send');
 });
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
 
 /*
 |--------------------------------------------------------------------------
@@ -241,6 +255,33 @@ Route::get('/buscar-tutores', [BusquedaController::class, 'index'])
 Route::get('/tutor/{id}/perfil', [BusquedaController::class, 'verTutor'])
     ->name('busqueda.tutor');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/perfil', [PerfilController::class, 'edit'])
+        ->name('perfil.edit');
+
+    Route::get('/dashboard', function () {
+        $user = Auth::user();
+
+        return match ($user->rol) {
+            'administrador' => redirect()->route('admin.dashboard'),
+            'tutor' => redirect()->route('tutor.dashboard'),
+            default => redirect()->route('estudiante.dashboard'),
+        };
+    })->name('dashboard');
+
+    Route::get('/estudiante/dashboard', [DashboardController::class, 'estudiante'])
+        ->name('estudiante.dashboard')
+        ->middleware('role:estudiante');
+
+    Route::get('/admin/dashboard', [DashboardController::class, 'admin'])
+        ->name('admin.dashboard')
+        ->middleware('role:administrador');
+
+    Route::get('/tutor/dashboard', [ClaseTutorController::class, 'dashboard'])
+        ->name('tutor.dashboard')
+        ->middleware('role:tutor');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Rutas protegidas
@@ -260,10 +301,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    // Mostrar formulario de edición del perfil
-    Route::get('/perfil', [PerfilController::class, 'edit'])
-        ->name('perfil.edit');
-
     // Actualizar datos del perfil
     Route::put('/perfil', [PerfilController::class, 'update'])
         ->name('perfil.update');
@@ -275,15 +312,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Eliminar la cuenta del usuario autenticado
     Route::delete('/perfil', [PerfilController::class, 'destroy'])
         ->name('perfil.destroy');
-
-    /*
-    |--------------------------------------------------------------------------
-    | Logout
-    |--------------------------------------------------------------------------
-    */
-
-    Route::post('/logout', [AuthController::class, 'logout'])
-        ->name('logout');
 
     /*
     |--------------------------------------------------------------------------
@@ -299,48 +327,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/notificaciones/leer-todas', [NotificacionController::class, 'marcarTodasLeidas'])
         ->name('notificaciones.leer-todas');
-
-    /*
-    |--------------------------------------------------------------------------
-    | Dashboard inteligente
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/dashboard', function () {
-
-        $user = Auth::user();
-
-        return match ($user->rol) {
-
-            'administrador' => redirect()->route('admin.dashboard'),
-
-            'tutor' => redirect()->route('tutor.dashboard'),
-
-            default => redirect()->route('estudiante.dashboard'),
-
-        };
-
-    })->name('dashboard');
-
-    /*
-    |--------------------------------------------------------------------------
-    | Dashboard del estudiante
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/estudiante/dashboard', [DashboardController::class, 'estudiante'])
-        ->name('estudiante.dashboard')
-        ->middleware('role:estudiante');
-
-    /*
-    |--------------------------------------------------------------------------
-    | Dashboard del administrador
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/admin/dashboard', [DashboardController::class, 'admin'])
-        ->name('admin.dashboard')
-        ->middleware('role:administrador');
 
     /*
     |--------------------------------------------------------------------------
@@ -505,15 +491,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->prefix('tutor')
         ->name('tutor.')
         ->group(function () {
-
-            /*
-            |--------------------------------------------------------------------------
-            | Dashboard principal
-            |--------------------------------------------------------------------------
-            */
-
-            Route::get('/dashboard', [ClaseTutorController::class, 'dashboard'])
-                ->name('dashboard');
 
             /*
             |--------------------------------------------------------------------------

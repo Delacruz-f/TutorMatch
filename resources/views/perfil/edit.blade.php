@@ -53,6 +53,21 @@
                 <input type="email" value="{{ Auth::user()->email }}" disabled
                        class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 text-white/60 cursor-not-allowed">
                 <p class="text-xs text-white/60 mt-1">El correo no se puede cambiar.</p>
+                @if(Auth::user()->hasVerifiedEmail())
+                    <p class="mt-2 text-sm font-semibold text-green-300" role="status">
+                        Correo verificado
+                    </p>
+                @else
+                    <div class="mt-3 flex flex-col items-start gap-2">
+                        <p class="text-sm text-amber-200" role="status">
+                            Tu correo todavía no está verificado.
+                        </p>
+                        <a href="{{ route('verification.notice') }}"
+                           class="inline-flex items-center rounded-xl bg-[#8b5e3c] px-4 py-2 font-semibold text-white transition hover:bg-[#70482d]">
+                            Verificar correo
+                        </a>
+                    </div>
+                @endif
             </div>
 
             <div>

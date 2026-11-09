@@ -46,6 +46,11 @@ class GoogleController extends Controller
                     ->with('error', 'Tu cuenta está suspendida. Contacta al administrador.');
             }
 
+            // Google ya validó el correo: evitamos que quede atrapado en la pantalla de verificación
+            if (!$user->hasVerifiedEmail()) {
+                $user->markEmailAsVerified();
+            }
+
             Auth::login($user);
             return $this->redirectByRol($user);
         }

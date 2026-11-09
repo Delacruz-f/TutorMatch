@@ -41,10 +41,23 @@
             </div>
         @endif
 
+        @if(session('error'))
+            <div class="bg-red-500/30 border border-red-300/40 rounded-xl px-4 py-3 mb-4 text-sm">
+                ⚠️ {{ session('error') }}
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
-            <button type="submit" class="bg-white text-brand-600 w-full py-3 rounded-xl font-bold hover:bg-white/90 transition">
+            <button type="submit" class="bg-[#8b5e3c] hover:bg-[#70482d] text-white w-full py-3 rounded-xl font-bold transition">
                 Reenviar correo
+            </button>
+        </form>
+
+        <form method="POST" action="{{ route('verification.skip') }}" class="mt-3">
+            @csrf
+            <button type="submit" class="w-full py-3 rounded-xl font-bold border border-white/50 text-white hover:bg-white/10 transition">
+                Omitir verificación y continuar al panel
             </button>
         </form>
 

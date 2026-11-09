@@ -10,7 +10,7 @@
     </p>
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 auto 24px;">
         <tr>
-            <td align="center" style="border-radius:10px;background-color:#4f46e5;">
+            <td align="center" style="border-radius:10px;background-color:#8b5e3c;">
                 <a href="{{ $url }}" style="display:inline-block;padding:14px 26px;border-radius:10px;color:#ffffff;text-decoration:none;font-size:15px;font-weight:bold;">Confirmar correo</a>
             </td>
         </tr>
@@ -19,9 +19,9 @@
         Si el botón no funciona, copia y pega este enlace en tu navegador:
     </p>
     <p style="margin:0 0 24px;font-size:12px;line-height:1.6;word-break:break-all;">
-        <a href="{{ $url }}" style="color:#4f46e5;">{{ $url }}</a>
+        <a href="{{ $url }}" style="color:#8b5e3c;">{{ $url }}</a>
     </p>
-    <div style="padding:14px 16px;border-left:4px solid #818cf8;background-color:#eef2ff;border-radius:6px;color:#4338ca;font-size:13px;line-height:1.6;">
+    <div style="padding:14px 16px;border-left:4px solid #8b5e3c;background-color:#f5eee9;border-radius:6px;color:#70482d;font-size:13px;line-height:1.6;">
         Si no creaste una cuenta en TutorMatch, puedes ignorar este correo.
     </div>
 @endsection

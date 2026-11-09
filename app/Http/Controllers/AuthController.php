@@ -63,11 +63,20 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
+        $user->sendEmailVerificationNotification();
 
-        return match ($user->rol) {
-            'tutor' => redirect()->route('tutor.dashboard'),
-            default => redirect()->route('estudiante.dashboard'),
-        };
+        return redirect()->route('verification.notice');
+    }
+
+    public function skipEmailVerification(Request $request)
+    {
+        // TEMPORAL: solo para desarrollo, eliminar en producción
+        $user = $request->user();
+        if (!$user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        }
+
+        return redirect()->route('dashboard');
     }
 
     public function logout(Request $request)
