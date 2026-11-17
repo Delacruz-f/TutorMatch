@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +13,7 @@
                     <tr>
                         <td align="center" style="background-color:#4f46e5;background-image:linear-gradient(135deg,#4f46e5,#7c3aed);padding:30px 24px;color:#ffffff;">
                             <div style="font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;">TutorMatch</div>
-                            <div style="font-size:13px;margin-top:7px;color:#e0e7ff;">Aprende y enseña con confianza</div>
+                            <div style="font-size:13px;margin-top:7px;color:#e0e7ff;">{{ __('ui.learning_with_confidence') }}</div>
                         </td>
                     </tr>
                     <tr>
@@ -25,7 +25,7 @@
                     <tr>
                         <td align="center" style="background-color:#f9fafb;border-top:1px solid #e5e7eb;padding:20px 24px;color:#6b7280;font-size:12px;line-height:1.6;">
                             TutorMatch &copy; {{ date('Y') }}<br>
-                            Plataforma de tutorías en línea
+                            {{ __('ui.online_tutoring_platform') }}
                         </td>
                     </tr>
                 </table>

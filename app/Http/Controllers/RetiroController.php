@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notificacion;
 use App\Models\Retiro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +50,15 @@ class RetiroController extends Controller
             'numero_cuenta' => $request->numero_cuenta,
             'estado' => 'pendiente',
         ]);
+
+        // Notificar a los administradores para que procesen el retiro
+        Notificacion::enviarARol(
+            'administrador',
+            'Nueva solicitud de retiro',
+            "El tutor {$tutor->user->nombre} solicitó retirar S/ {$request->monto} por {$request->metodo}.",
+            route('admin.retiros.index'),
+            'retiro'
+        );
 
         return back()->with('success', 'Solicitud de retiro enviada. El admin la procesará pronto.');
     }

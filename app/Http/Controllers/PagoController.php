@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Clase;
+use App\Models\Notificacion;
 use App\Models\Pago;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -59,6 +60,15 @@ class PagoController extends Controller
 
         // Actualizar estado de la clase
         $clase->update(['estado' => 'pendiente']);
+
+        // Notificar al administrador que debe validar el comprobante
+        Notificacion::enviarARol(
+            'administrador',
+            'Nuevo comprobante de pago',
+            Auth::user()->nombre . ' subió un comprobante de S/ ' . $clase->precio_total . ' para la clase de ' . $clase->materia->nombre . '.',
+            route('admin.pagos.index'),
+            'pago'
+        );
 
         return redirect()->route('estudiante.dashboard')
             ->with('success', 'Pago enviado. Espera la validación del administrador.');

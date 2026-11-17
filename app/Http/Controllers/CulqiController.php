@@ -37,7 +37,7 @@ class CulqiController extends Controller
             'email' => 'required|email',
         ]);
 
-        $clase = Clase::with(['tutor.user', 'materia'])
+        $clase = Clase::with(['tutor.user', 'materia', 'estudiante'])
             ->where('estudiante_id', Auth::id())
             ->where('estado', 'pendiente_pago')
             ->findOrFail($claseId);

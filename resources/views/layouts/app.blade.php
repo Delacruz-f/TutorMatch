@@ -1,25 +1,21 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.seo')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @vite('resources/js/app.js')
 
-    <title>TutorMatch - @yield('title', 'Inicio')</title>
+    <title>TutorMatch - @yield('title', __('ui.home'))</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif']
+                        sans: ['Plus Jakarta Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        display: ['Sora', 'Plus Jakarta Sans', 'sans-serif'],
                     },
 
                     colors: {
@@ -67,49 +63,18 @@
     </script>
 
     <style>
-        /* Fondo global con gradiente animado */
-        body {
-            background: linear-gradient(
-                -45deg,
-                #667eea,
-                #764ba2,
-                #6366f1,
-                #8b5cf6
-            );
+        /*
+            Base del panel.
+            El fondo, el vidrio esmerilado y los estilos de .glass /.input-glass /
+            .btn-primary viven en theme.css (se carga desde partials/seo), para
+            no duplicar reglas que allí ya estan definidas con el tema oscuro.
+            Aquí solo quedan los ajustes propios del layout del panel.
+        */
 
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            min-height: 100vh;
-        }
-
-        /* Vidrio esmerilado */
-        .glass {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-        }
-
-        .glass-dark {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-        }
-
-        /* Sidebar item activo */
+        /* Sidebar item activo (el material base vive en theme.css) */
         .sidebar-item-active {
-            background: rgba(255, 255, 255, 0.25);
-            border-left: 3px solid white;
+            border-left: 3px solid #fdba74;
+            color: #fff;
         }
 
         /* Scrollbar custom */
@@ -131,40 +96,15 @@
             background: rgba(255, 255, 255, 0.5);
         }
 
-        /* Inputs con estilo glass */
-        .input-glass {
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(10px);
-        }
-
-        .input-glass:focus {
-            background: rgba(255, 255, 255, 0.95);
-            border-color: #6366f1;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-        }
-
-        /* Botón principal */
-        .btn-primary {
-            background: linear-gradient(
-                135deg,
-                #6366f1 0%,
-                #8b5cf6 100%
-            );
-
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
-        }
     </style>
-    <link rel="stylesheet" href="{{ asset('theme.css') }}">
+
+    @stack('styles')
 </head>
 
-<body class="font-sans antialiased min-h-screen text-gray-800">
+<body
+    class="font-sans antialiased min-h-screen text-white"
+    data-user-id="{{ Auth::id() ?? '' }}"
+    data-broadcast-auth-url="{{ url('/broadcasting/auth') }}">
 
 <div x-data="{ sidebarOpen: false }" class="min-h-screen flex">
 
@@ -179,7 +119,7 @@
     <!-- SIDEBAR -->
     <aside
         :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-        class="fixed lg:translate-x-0 top-0 left-0 h-screen w-64 glass z-50 transition-transform duration-300 ease-in-out flex flex-col">
+        class="sidebar fixed lg:translate-x-0 top-0 left-0 h-screen w-64 glass z-50 transition-transform duration-300 ease-in-out flex flex-col">
 
         <!-- LOGO -->
         <div class="p-6 border-b border-white/20">
@@ -188,17 +128,17 @@
                 href="{{ route('home') }}"
                 class="flex items-center gap-3 text-white">
 
-                <div class="w-10 h-10 bg-white/25 rounded-xl flex items-center justify-center overflow-hidden">
+                <div class="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center overflow-hidden border border-white/15">
                     <img src="{{ asset('img/TUTORMATCH1.png') }}" alt="TutorMatch" class="w-full h-full object-contain">
                 </div>
 
                 <div>
-                    <h1 class="text-lg font-bold">
+                    <h1 class="text-lg font-bold font-display tracking-tight">
                         TutorMatch
                     </h1>
 
                     <p class="text-xs text-white/70">
-                        Plataforma Educativa
+                        {{ __('ui.education_platform') }}
                     </p>
                 </div>
 
@@ -213,6 +153,17 @@
 
                 @php
                     $rutaActual = request()->route()->getName();
+
+                    /*
+                        Un tutor que aún no tiene perfil (o lo está completando / estaba
+                        rechazado) no puede usar el resto de su panel: solo se habilita
+                        cuando el perfil está aprobado.
+                    */
+                    $perfilTutor = Auth::user()->rol === 'tutor' ? Auth::user()->tutor : null;
+                    $panelTutorBloqueado = Auth::user()->rol === 'tutor'
+                        && (! $perfilTutor || in_array($perfilTutor->aprobacion, ['pendiente', 'rechazado']));
+
+                    $itemBloqueado = 'pointer-events-none opacity-45 cursor-not-allowed select-none';
                 @endphp
 
                 <!-- INICIO -->
@@ -221,8 +172,8 @@
                     href="{{ route('home') }}"
                     class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ $rutaActual === 'home' ? 'sidebar-item-active' : '' }}">
 
-                    <span class="text-lg">🏠</span>
-                    <span class="font-medium">Inicio</span>
+                    <x-icon name="home" class="w-5 h-5 shrink-0" />
+                    <span class="font-medium">{{ __('ui.home') }}</span>
 
                 </a>
 
@@ -231,10 +182,11 @@
 
                 <a
                     href="{{ route('busqueda.index') }}"
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'busqueda') ? 'sidebar-item-active' : '' }}">
+                    @if($panelTutorBloqueado) aria-disabled="true" tabindex="-1" title="{{ __('ui.complete_profile') }}" @endif
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'busqueda') ? 'sidebar-item-active' : '' }} {{ $panelTutorBloqueado ? $itemBloqueado : '' }}">
 
-                    <span class="text-lg">🔍</span>
-                    <span class="font-medium">Buscar Tutores</span>
+                    <x-icon name="search" class="w-5 h-5 shrink-0" />
+                    <span class="font-medium">{{ __('ui.search_tutors') }}</span>
 
                 </a>
 
@@ -246,7 +198,7 @@
                 @if(Auth::user()->rol === 'administrador')
 
                     <p class="px-4 pt-4 pb-2 text-xs uppercase text-white/50 font-bold tracking-wider">
-                        Administración
+                        {{ __('ui.administration') }}
                     </p>
 
 
@@ -256,8 +208,8 @@
                         href="{{ route('admin.dashboard') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ $rutaActual === 'admin.dashboard' ? 'sidebar-item-active' : '' }}">
 
-                        <span class="text-lg">📊</span>
-                        <span class="font-medium">Dashboard</span>
+                        <x-icon name="layout-dashboard" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.dashboard') }}</span>
 
                     </a>
 
@@ -268,8 +220,8 @@
                         href="{{ route('admin.tutores.index') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'admin.tutores') ? 'sidebar-item-active' : '' }}">
 
-                        <span class="text-lg">👨‍🏫</span>
-                        <span class="font-medium">Tutores</span>
+                        <x-icon name="graduation-cap" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.tutors') }}</span>
 
                     </a>
 
@@ -280,8 +232,8 @@
                         href="{{ route('admin.usuarios.index') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'admin.usuarios') ? 'sidebar-item-active' : '' }}">
 
-                        <span class="text-lg">👥</span>
-                        <span class="font-medium">Usuarios</span>
+                        <x-icon name="users" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.users') }}</span>
 
                     </a>
 
@@ -292,8 +244,8 @@
                         href="{{ route('admin.materias.index') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'admin.materias') ? 'sidebar-item-active' : '' }}">
 
-                        <span class="text-lg">📚</span>
-                        <span class="font-medium">Materias</span>
+                        <x-icon name="book-open" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.subjects') }}</span>
 
                     </a>
 
@@ -304,8 +256,8 @@
                         href="{{ route('admin.pagos.index') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'admin.pagos') ? 'sidebar-item-active' : '' }}">
 
-                        <span class="text-lg">💳</span>
-                        <span class="font-medium">Pagos</span>
+                        <x-icon name="credit-card" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.payments') }}</span>
 
                     </a>
 
@@ -316,8 +268,8 @@
                         href="{{ route('admin.retiros.index') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'admin.retiros') ? 'sidebar-item-active' : '' }}">
 
-                        <span class="text-lg">💰</span>
-                        <span class="font-medium">Retiros</span>
+                        <x-icon name="wallet" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.withdrawals') }}</span>
 
                     </a>
 
@@ -328,12 +280,12 @@
                         href="{{ route('admin.resenas.index') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'admin.resenas') ? 'sidebar-item-active' : '' }}">
 
-                        <span class="text-lg">⭐</span>
-                        <span class="font-medium">Reseñas</span>
+                        <x-icon name="star" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.reviews') }}</span>
 
                     </a>
                     <a href="{{ route('admin.transacciones.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'admin.transacciones') ? 'sidebar-item-active' : '' }}">
-    <span class="text-lg">💸</span><span class="font-medium">Transacciones</span>
+    <x-icon name="receipt" class="w-5 h-5 shrink-0" /><span class="font-medium">{{ __('ui.transactions') }}</span>
 </a>
 
 
@@ -343,8 +295,8 @@
                         href="{{ route('admin.suscripciones.index') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'admin.suscripciones') ? 'sidebar-item-active' : '' }}">
 
-                        <span class="text-lg">⭐</span>
-                        <span class="font-medium">Suscripciones</span>
+                        <x-icon name="sparkles" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.subscriptions') }}</span>
 
                     </a>
 
@@ -355,8 +307,8 @@
                         href="{{ route('admin.reportes.index') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'admin.reportes') ? 'sidebar-item-active' : '' }}">
 
-                        <span class="text-lg">📈</span>
-                        <span class="font-medium">Reportes</span>
+                        <x-icon name="chart" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.reports') }}</span>
 
                     </a>
 
@@ -370,7 +322,7 @@
                 @if(Auth::user()->rol === 'tutor')
 
                     <p class="px-4 pt-4 pb-2 text-xs uppercase text-white/50 font-bold tracking-wider">
-                        Mi Panel
+                        {{ __('ui.my_panel') }}
                     </p>
 
 
@@ -380,20 +332,30 @@
                         href="{{ route('tutor.dashboard') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ $rutaActual === 'tutor.dashboard' ? 'sidebar-item-active' : '' }}">
 
-                        <span class="text-lg">📊</span>
-                        <span class="font-medium">Dashboard</span>
+                        <x-icon name="layout-dashboard" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.dashboard') }}</span>
 
                     </a>
+
+                    @if($panelTutorBloqueado)
+
+                        <p class="mx-1 mt-2 mb-1 px-3 py-2.5 rounded-xl text-xs leading-relaxed text-white/70 bg-white/10 border border-white/15 flex gap-2">
+                            <x-icon name="lock" class="w-4 h-4 shrink-0 mt-0.5" />
+                            <span>{{ __('ui.profile_pending') }}</span>
+                        </p>
+
+                    @endif
 
 
                     <!-- RETIROS -->
 
                     <a
                         href="{{ route('tutor.retiros.index') }}"
-                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'tutor.retiros') ? 'sidebar-item-active' : '' }}">
+                        @if($panelTutorBloqueado) aria-disabled="true" tabindex="-1" title="{{ __('ui.complete_profile') }}" @endif
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'tutor.retiros') ? 'sidebar-item-active' : '' }} {{ $panelTutorBloqueado ? $itemBloqueado : '' }}">
 
-                        <span class="text-lg">💰</span>
-                        <span class="font-medium">Retiros</span>
+                        <x-icon name="wallet" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.withdrawals') }}</span>
 
                     </a>
 
@@ -402,10 +364,11 @@
 
                     <a
                         href="{{ route('tutor.suscripciones.index') }}"
-                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'tutor.suscripciones') ? 'sidebar-item-active' : '' }}">
+                        @if($panelTutorBloqueado) aria-disabled="true" tabindex="-1" title="{{ __('ui.complete_profile') }}" @endif
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'tutor.suscripciones') ? 'sidebar-item-active' : '' }} {{ $panelTutorBloqueado ? $itemBloqueado : '' }}">
 
-                        <span class="text-lg">⭐</span>
-                        <span class="font-medium">Suscripción</span>
+                        <x-icon name="sparkles" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.subscriptions') }}</span>
 
                     </a>
 
@@ -414,10 +377,11 @@
 
                     <a
                         href="{{ route('tutor.disponibilidad.index') }}"
-                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'tutor.disponibilidad') ? 'sidebar-item-active' : '' }}">
+                        @if($panelTutorBloqueado) aria-disabled="true" tabindex="-1" title="{{ __('ui.complete_profile') }}" @endif
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'tutor.disponibilidad') ? 'sidebar-item-active' : '' }} {{ $panelTutorBloqueado ? $itemBloqueado : '' }}">
 
-                        <span class="text-lg">🕐</span>
-                        <span class="font-medium">Disponibilidad</span>
+                        <x-icon name="clock" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.availability') }}</span>
 
                     </a>
 
@@ -426,10 +390,11 @@
 
                     <a
                         href="{{ route('tutor.resenas.index') }}"
-                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'tutor.resenas') ? 'sidebar-item-active' : '' }}">
+                        @if($panelTutorBloqueado) aria-disabled="true" tabindex="-1" title="{{ __('ui.complete_profile') }}" @endif
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'tutor.resenas') ? 'sidebar-item-active' : '' }} {{ $panelTutorBloqueado ? $itemBloqueado : '' }}">
 
-                        <span class="text-lg">⭐</span>
-                        <span class="font-medium">Mis Reseñas</span>
+                        <x-icon name="star" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.my_reviews') }}</span>
 
                     </a>
 
@@ -443,7 +408,7 @@
                 @if(Auth::user()->rol === 'estudiante')
 
                     <p class="px-4 pt-4 pb-2 text-xs uppercase text-white/50 font-bold tracking-wider">
-                        Mi Panel
+                        {{ __('ui.my_panel') }}
                     </p>
 
 
@@ -453,8 +418,8 @@
                         href="{{ route('estudiante.dashboard') }}"
                         class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ $rutaActual === 'estudiante.dashboard' ? 'sidebar-item-active' : '' }}">
 
-                        <span class="text-lg">📊</span>
-                        <span class="font-medium">Mis Clases</span>
+                        <x-icon name="layout-dashboard" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.my_classes') }}</span>
 
                     </a>
 
@@ -466,7 +431,7 @@
                 ========================================================== --}}
 
                 <p class="px-4 pt-4 pb-2 text-xs uppercase text-white/50 font-bold tracking-wider">
-                    Cuenta
+                    {{ __('ui.account') }}
                 </p>
 
 
@@ -476,20 +441,19 @@
                     href="{{ route('notificaciones.index') }}"
                     class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ Str::startsWith($rutaActual, 'notificaciones') ? 'sidebar-item-active' : '' }}">
 
-                    <span class="text-lg">🔔</span>
-                    <span class="font-medium">Notificaciones</span>
+                    <x-icon name="bell" class="w-5 h-5 shrink-0" />
+                    <span class="font-medium">{{ __('ui.notifications') }}</span>
 
                     @php
                         $notifNoLeidas = Auth::user()->notificacionesNoLeidas()->count();
                     @endphp
 
-                    @if($notifNoLeidas > 0)
-
-                        <span class="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
-                            {{ $notifNoLeidas > 99 ? '99+' : $notifNoLeidas }}
-                        </span>
-
-                    @endif
+                    <span
+                        data-notification-count
+                        data-count-limit="99"
+                        class="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-0.5 {{ $notifNoLeidas > 0 ? '' : 'hidden' }}">
+                        {{ $notifNoLeidas > 99 ? '99+' : $notifNoLeidas }}
+                    </span>
 
                 </a>
 
@@ -501,8 +465,8 @@
                     href="{{ route('login') }}"
                     class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition">
 
-                    <span class="text-lg">🔑</span>
-                    <span class="font-medium">Iniciar Sesión</span>
+                    <x-icon name="key" class="w-5 h-5 shrink-0" />
+                    <span class="font-medium">{{ __('ui.sign_in') }}</span>
 
                 </a>
 
@@ -513,8 +477,8 @@
                     href="{{ route('register') }}"
                     class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition">
 
-                    <span class="text-lg">✨</span>
-                    <span class="font-medium">Registrarse</span>
+                    <x-icon name="sparkles" class="w-5 h-5 shrink-0" />
+                    <span class="font-medium">{{ __('ui.register') }}</span>
 
                 </a>
 
@@ -527,7 +491,7 @@
 
         <div class="p-4 border-t border-white/20">
 
-            <p class="text-xs text-white/60 text-center">
+            <p class="text-xs text-white/50 text-center">
                 &copy; {{ date('Y') }} TutorMatch
             </p>
 
@@ -547,6 +511,12 @@
 
             <div class="flex items-center justify-between gap-4">
 
+                {{-- El badge de notificaciones del topbar usa $notifNoLeidas --}}
+                @auth
+                    @php
+                        $notifNoLeidas = $notifNoLeidas ?? Auth::user()->notificacionesNoLeidas()->count();
+                    @endphp
+                @endauth
 
                 <!-- HAMBURGER + TÍTULO -->
 
@@ -556,19 +526,7 @@
                         @click="sidebarOpen = !sidebarOpen"
                         class="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg">
 
-                        <svg
-                            class="w-6 h-6"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M4 6h16M4 12h16M4 18h16"/>
-
-                        </svg>
+                        <x-icon name="menu" class="w-6 h-6" />
 
                     </button>
 
@@ -584,6 +542,8 @@
 
                 <div class="flex items-center gap-3">
 
+                    @include('partials.language-switcher')
+
                     @auth
 
                         <!-- NOTIFICACIONES -->
@@ -592,28 +552,15 @@
                             href="{{ route('notificaciones.index') }}"
                             class="relative text-white p-2 hover:bg-white/10 rounded-lg transition">
 
-                            <svg
-                                class="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
-
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-
-                            </svg>
+                            <x-icon name="bell" class="w-5 h-5" />
 
 
-                            @if($notifNoLeidas > 0)
-
-                                <span class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                                    {{ $notifNoLeidas > 9 ? '9+' : $notifNoLeidas }}
-                                </span>
-
-                            @endif
+                            <span
+                                data-notification-count
+                                data-count-limit="9"
+                                class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center {{ $notifNoLeidas > 0 ? '' : 'hidden' }}">
+                                {{ $notifNoLeidas > 9 ? '9+' : $notifNoLeidas }}
+                            </span>
 
                         </a>
 
@@ -642,25 +589,13 @@
                                     </p>
 
                                     <p class="text-xs text-white/70 capitalize">
-                                        {{ Auth::user()->rol }}
+                                        {{ __('ui.role_labels.' . Auth::user()->rol) }}
                                     </p>
 
                                 </div>
 
 
-                                <svg
-                                    class="w-4 h-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24">
-
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M19 9l-7 7-7-7"/>
-
-                                </svg>
+                                <x-icon name="chevron-down" class="w-4 h-4" />
 
                             </button>
 
@@ -678,9 +613,9 @@
 
                                 <a
                                     href="{{ route('perfil.edit') }}"
-                                    class="block px-4 py-2 text-sm hover:bg-white/10">
+                                    class="flex items-center gap-2.5 px-4 py-2 text-sm hover:bg-white/10">
 
-                                    👤 Mi Perfil
+                                    <x-icon name="user" class="w-4 h-4" /> {{ __('ui.my_profile') }}
 
                                 </a>
 
@@ -689,9 +624,9 @@
 
                                 <a
                                     href="{{ route('notificaciones.index') }}"
-                                    class="block px-4 py-2 text-sm hover:bg-white/10">
+                                    class="flex items-center gap-2.5 px-4 py-2 text-sm hover:bg-white/10">
 
-                                    🔔 Notificaciones
+                                    <x-icon name="bell" class="w-4 h-4" /> {{ __('ui.notifications') }}
 
                                 </a>
 
@@ -709,9 +644,9 @@
 
                                     <button
                                         type="submit"
-                                        class="w-full text-left px-4 py-2 text-sm text-red-200 hover:bg-white/10">
+                                        class="w-full inline-flex items-center gap-2.5 text-left px-4 py-2 text-sm text-red-200 hover:bg-white/10">
 
-                                        🚪 Cerrar Sesión
+                                        <x-icon name="log-out" class="w-4 h-4" /> {{ __('ui.sign_out') }}
 
                                     </button>
 
@@ -729,7 +664,7 @@
                             href="{{ route('login') }}"
                             class="text-white hover:bg-white/10 px-4 py-2 rounded-lg transition text-sm">
 
-                            Iniciar Sesión
+                            {{ __('ui.sign_in') }}
 
                         </a>
 
@@ -740,7 +675,7 @@
                             href="{{ route('register') }}"
                             class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-medium">
 
-                            Registrarse
+                            {{ __('ui.register') }}
 
                         </a>
 
@@ -757,56 +692,7 @@
 
         <div class="px-4 sm:px-6 pt-4">
 
-            @if(session('success'))
-
-                <div class="mb-4 glass text-white px-4 py-3 rounded-xl border-l-4 border-green-400 flex items-center gap-3">
-
-                    <span>✅</span>
-
-                    {{ session('success') }}
-
-                </div>
-
-            @endif
-
-
-            @if(session('error'))
-
-                <div class="mb-4 glass text-white px-4 py-3 rounded-xl border-l-4 border-red-400 flex items-center gap-3">
-
-                    <span>⚠️</span>
-
-                    {{ session('error') }}
-
-                </div>
-
-            @endif
-
-
-            @if($errors->any())
-
-                <div class="mb-4 glass text-white px-4 py-3 rounded-xl border-l-4 border-red-400">
-
-                    <p class="font-bold mb-1">
-                        ⚠️ Revisa los siguientes errores:
-                    </p>
-
-
-                    <ul class="list-disc list-inside text-sm">
-
-                        @foreach($errors->all() as $error)
-
-                            <li>
-                                {{ $error }}
-                            </li>
-
-                        @endforeach
-
-                    </ul>
-
-                </div>
-
-            @endif
+            <x-alert />
 
         </div>
 
@@ -824,13 +710,26 @@
 
         <footer class="px-6 py-4 text-center text-white/60 text-xs">
 
-            &copy; {{ date('Y') }} TutorMatch — Todos los derechos reservados.
+            &copy; {{ date('Y') }} TutorMatch — {{ __('ui.all_rights_reserved') }}
 
         </footer>
 
     </div>
 
 </div>
+
+<div
+    data-notification-toast
+    role="status"
+    aria-live="polite"
+    class="hidden fixed top-20 right-4 z-50 w-full max-w-sm rounded-xl border border-white/20 bg-slate-900 p-4 text-white shadow-xl">
+    <a href="{{ route('notificaciones.index') }}" class="block">
+        <p data-notification-title class="font-semibold"></p>
+        <p data-notification-message class="mt-1 text-sm text-white/75"></p>
+    </a>
+</div>
+
+@stack('scripts')
 
 </body>
 </html>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Clase;
+use App\Models\Notificacion;
 use App\Models\Resena;
 use App\Models\Tutor;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class ResenaController extends Controller
      */
     public function create($claseId)
     {
-        $clase = Clase::with(['tutor.user', 'materia'])
+        $clase = Clase::with(['tutor.user', 'materia', 'estudiante'])
             ->where('estudiante_id', Auth::id())
             ->where('estado', 'completada')
             ->findOrFail($claseId);
@@ -69,6 +70,15 @@ class ResenaController extends Controller
             'calificacion_promedio' => round($promedio ?? 0, 2),
             'total_resenas' => $total,
         ]);
+
+        // Notificar al tutor
+        Notificacion::enviar(
+            $tutor->user_id,
+            '⭐ Nueva reseña recibida',
+            "{$clase->estudiante->nombre} te dejó {$request->calificacion}/5 en {$clase->materia->nombre}.",
+            route('tutor.resenas.index'),
+            'resena'
+        );
 
         return redirect()->route('estudiante.dashboard')
             ->with('success', '¡Gracias por tu reseña!');

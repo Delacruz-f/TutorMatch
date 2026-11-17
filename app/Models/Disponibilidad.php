@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Disponibilidad extends Model
 {
@@ -12,7 +13,7 @@ class Disponibilidad extends Model
         'tutor_id', 'dia_semana', 'hora_inicio', 'hora_fin'
     ];
 
-    public function tutor()
+    public function tutor(): BelongsTo
     {
         return $this->belongsTo(Tutor::class);
     }

@@ -1,130 +1,53 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TutorMatch - Iniciar Sesión</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+@extends('layouts.guest')
+
+@section('title', __('ui.login_title'))
+
+@section('bodyClass', 'flex items-center justify-center p-4 overflow-hidden')
+
+@push('styles')
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(-45deg, #667eea, #764ba2, #6366f1, #8b5cf6);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            min-height: 100vh;
-        }
-
-        @keyframes gradient {
-            0%, 100% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-        }
-
-        .input-glass {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-        }
-
-        .input-glass::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .input-glass:focus {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.6);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
-        }
-
-        .btn-glass {
-            background: rgba(255, 255, 255, 0.95);
-            color: #4f46e5;
-            transition: all 0.3s ease;
-        }
-
-        .btn-glass:hover {
-            background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.4);
-        }
-
-        /* Burbujas decorativas */
-        .bubble {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-20px);
-            }
+        /*
+            Ajustes solo del formulario de acceso.
+            .input-glass y .btn-glass toman su estilo base de theme.css.
+        */
+        .login-card {
+            max-height: calc(100vh - 2rem);
+            overflow-y: auto;
         }
     </style>
-    <link rel="stylesheet" href="{{ asset('theme.css') }}">
-</head>
+@endpush
 
-<body class="flex items-center justify-center p-4 overflow-hidden">
+@section('content')
 
     <!-- Burbujas decorativas -->
     <div class="bubble w-64 h-64 top-10 left-10" style="animation-delay: 0s;"></div>
     <div class="bubble w-40 h-40 bottom-20 right-20" style="animation-delay: 2s;"></div>
     <div class="bubble w-24 h-24 top-1/2 right-1/4" style="animation-delay: 4s;"></div>
 
-    <div class="glass-card rounded-3xl p-8 sm:p-10 w-full max-w-md relative z-10 text-white">
+    <div class="login-card glass-card rounded-3xl p-8 sm:p-10 w-full max-w-md relative z-10 text-white">
 
         <!-- Logo / Icono -->
         <div class="flex flex-col items-center mb-8">
 
-            <div class="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center mb-4 border border-white/30 overflow-hidden">
+            <div class="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center mb-4 border border-white/20 overflow-hidden">
                 <img src="{{ asset('img/TUTORMATCH1.png') }}" alt="TutorMatch" class="w-full h-full object-contain">
             </div>
 
-            <h1 class="text-3xl font-bold">
+            <h1 class="text-3xl font-bold font-display tracking-tight">
                 TutorMatch
             </h1>
 
             <p class="text-white/70 text-sm mt-1">
-                Bienvenido de vuelta
+                {{ __('ui.welcome_back') }}
             </p>
         </div>
 
         <!-- Errores -->
-        @if ($errors->any())
-            <div class="bg-red-500/30 border border-red-300/40 backdrop-blur rounded-xl px-4 py-3 mb-4 text-sm">
-
-                @foreach ($errors->all() as $error)
-                    <p>⚠️ {{ $error }}</p>
-                @endforeach
-
-            </div>
-        @endif
+        <x-form-errors blur />
 
         <!-- Mensaje de éxito -->
-        @if (session('success'))
-            <div class="bg-green-500/30 border border-green-300/40 backdrop-blur rounded-xl px-4 py-3 mb-4 text-sm">
-                <p>✅ {{ session('success') }}</p>
-            </div>
-        @endif
+        <x-flash type="success" />
+
         <a href="{{ route('google.redirect') }}"
    class="flex items-center justify-center gap-3 w-full bg-white text-gray-800 py-3 rounded-xl font-medium hover:bg-gray-100 transition mb-4">
     <svg class="w-5 h-5" viewBox="0 0 24 24">
@@ -133,7 +56,7 @@
         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
     </svg>
-    Continuar con Google
+    {{ __('ui.continue_google') }}
 </a>
 
 <div class="relative my-6">
@@ -141,7 +64,7 @@
         <div class="w-full border-t border-white/20"></div>
     </div>
     <div class="relative flex justify-center text-xs">
-        <span class="px-3 bg-transparent text-white/60">o continúa con tu correo</span>
+        <span class="px-3 bg-transparent text-white/60">{{ __('ui.or_continue_email') }}</span>
     </div>
 </div>
 
@@ -153,7 +76,7 @@
             <!-- Correo -->
             <div>
                 <label class="block text-sm font-medium mb-2">
-                    Correo electrónico
+                    {{ __('ui.email') }}
                 </label>
 
                 <input
@@ -162,7 +85,7 @@
                     value="{{ old('email') }}"
                     required
                     autofocus
-                    placeholder="tu@email.com"
+                    placeholder="{{ __('ui.login_email_placeholder') }}"
                     class="input-glass w-full px-4 py-3 rounded-xl transition-all duration-200"
                 >
             </div>
@@ -170,7 +93,7 @@
             <!-- Contraseña -->
             <div>
                 <label class="block text-sm font-medium mb-2">
-                    Contraseña
+                    {{ __('ui.password') }}
                 </label>
 
                 <input
@@ -194,7 +117,7 @@
                     >
 
                     <span class="text-white/80">
-                        Recordarme
+                        {{ __('ui.remember_me') }}
                     </span>
 
                 </label>
@@ -203,7 +126,7 @@
                     href="{{ route('password.request') }}"
                     class="text-white/80 hover:text-white hover:underline"
                 >
-                    ¿Olvidaste tu contraseña?
+                    {{ __('ui.forgot_password') }}
                 </a>
 
             </div>
@@ -213,7 +136,7 @@
                 type="submit"
                 class="btn-glass w-full py-3 rounded-xl font-bold text-base"
             >
-                Iniciar Sesión
+                {{ __('ui.sign_in') }}
             </button>
 
         </form>
@@ -221,13 +144,13 @@
         <!-- Registro -->
         <p class="text-center text-sm mt-6 text-white/80">
 
-            ¿No tienes cuenta?
+            {{ __('ui.create_account_question') }}
 
             <a
                 href="{{ route('register') }}"
                 class="font-bold text-white hover:underline ml-1"
             >
-                Regístrate
+                {{ __('ui.sign_up') }}
             </a>
 
         </p>
@@ -235,8 +158,8 @@
         <!-- Credenciales demo -->
         <div class="mt-6 pt-4 border-t border-white/20 text-xs text-white/70">
 
-            <p class="font-bold mb-1">
-                🔑 Credenciales de prueba:
+            <p class="font-bold mb-1 flex items-center gap-1.5">
+                <x-icon name="key" class="w-3.5 h-3.5" /> {{ __('ui.test_credentials') }}
             </p>
 
             <p>
@@ -252,7 +175,7 @@
             </p>
 
             <p class="mt-1">
-                Contraseña:
+                {{ __('ui.password') }}:
                 <strong>Admin12345</strong>
             </p>
 
@@ -260,5 +183,4 @@
 
     </div>
 
-</body>
-</html>
+@endsection

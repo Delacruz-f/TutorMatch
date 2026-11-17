@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Suscripcion extends Model
 {
@@ -18,7 +19,7 @@ class Suscripcion extends Model
         'fecha_fin' => 'date',
     ];
 
-    public function tutor()
+    public function tutor(): BelongsTo
     {
         return $this->belongsTo(Tutor::class);
     }

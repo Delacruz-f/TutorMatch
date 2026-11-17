@@ -1,24 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Mi Disponibilidad')
+@section('title', __('ui.availability_page'))
 
 @section('content')
 <div class="max-w-3xl mx-auto" x-data="disponibilidadForm()">
     <div class="glass rounded-2xl p-6 text-white mb-6">
-        <h1 class="text-3xl font-bold mb-1">🕐 Mi Disponibilidad</h1>
-        <p class="text-white/80">Configura los días y horarios en los que puedes dar clases</p>
+        <h1 class="text-3xl font-bold mb-1 flex items-center"><x-icon name="clock" class="w-7 h-7" /> {{ __('ui.availability_page') }}</h1>
+        <p class="text-white/80">{{ __('ui.availability_description') }}</p>
     </div>
 
     @if(session('success'))
-        <div class="glass text-white px-4 py-3 rounded-xl border-l-4 border-green-400 mb-6">
-            ✅ {{ session('success') }}
+        <div class="glass text-white px-4 py-3 rounded-xl border-l-4 border-green-400 mb-6 flex items-center gap-2">
+            <x-icon name="check-circle" class="w-5 h-5 shrink-0" /> {{ session('success') }}
         </div>
     @endif
 
     @if($errors->any())
         <div class="glass text-white px-4 py-3 rounded-xl border-l-4 border-red-400 mb-6">
             @foreach($errors->all() as $e)
-                <p>⚠️ {{ $e }}</p>
+                <p class="flex items-center gap-2"><x-icon name="alert-triangle" class="w-4 h-4 shrink-0" /> {{ $e }}</p>
             @endforeach
         </div>
     @endif
@@ -33,23 +33,23 @@
             
             {{-- Día --}}
             <div class="lg:col-span-3">
-                <label class="block text-xs text-white/70 mb-1 font-medium">📅 Día</label>
+                <label class="text-xs text-white/70 mb-1 font-medium flex items-center gap-1.5"><x-icon name="calendar" class="w-3.5 h-3.5" /> {{ __('ui.day') }}</label>
                 <select :name="`disponibilidad[${index}][dia_semana]`" x-model="slot.dia" required
                         class="w-full px-3 py-2 rounded-lg bg-white/15 border border-white/30 text-white focus:bg-white/25 focus:outline-none text-sm">
-                    <option value="" class="text-gray-800">Seleccionar</option>
-                    <option value="1" class="text-gray-800">Lunes</option>
-                    <option value="2" class="text-gray-800">Martes</option>
-                    <option value="3" class="text-gray-800">Miércoles</option>
-                    <option value="4" class="text-gray-800">Jueves</option>
-                    <option value="5" class="text-gray-800">Viernes</option>
-                    <option value="6" class="text-gray-800">Sábado</option>
-                    <option value="7" class="text-gray-800">Domingo</option>
+                    <option value="" class="text-gray-800">{{ __('ui.select') }}</option>
+                    <option value="1" class="text-gray-800">{{ __('ui.monday') }}</option>
+                    <option value="2" class="text-gray-800">{{ __('ui.tuesday') }}</option>
+                    <option value="3" class="text-gray-800">{{ __('ui.wednesday') }}</option>
+                    <option value="4" class="text-gray-800">{{ __('ui.thursday') }}</option>
+                    <option value="5" class="text-gray-800">{{ __('ui.friday') }}</option>
+                    <option value="6" class="text-gray-800">{{ __('ui.saturday') }}</option>
+                    <option value="7" class="text-gray-800">{{ __('ui.sunday') }}</option>
                 </select>
             </div>
 
             {{-- Hora inicio --}}
             <div class="lg:col-span-4">
-                <label class="block text-xs text-white/70 mb-1 font-medium">🕐 Desde</label>
+                <label class="text-xs text-white/70 mb-1 font-medium flex items-center gap-1.5"><x-icon name="clock" class="w-3.5 h-3.5" /> {{ __('ui.from') }}</label>
                 <div class="grid grid-cols-3 gap-1">
                     {{-- Hora --}}
                     <select x-model="slot.inicio_hora" @change="updateHoraInicio(index)" 
@@ -85,13 +85,13 @@
                 {{-- Input oculto que envía la hora final --}}
                 <input type="hidden" :name="`disponibilidad[${index}][hora_inicio]`" :value="slot.inicio">
                 <p class="text-xs text-white/60 mt-1">
-                    Seleccionado: <strong x-text="formatHora(slot.inicio)"></strong>
+                    {{ __('ui.selected_time') }} <strong x-text="formatHora(slot.inicio)"></strong>
                 </p>
             </div>
 
             {{-- Hora fin --}}
             <div class="lg:col-span-4">
-                <label class="block text-xs text-white/70 mb-1 font-medium">🕐 Hasta</label>
+                <label class="text-xs text-white/70 mb-1 font-medium flex items-center gap-1.5"><x-icon name="clock" class="w-3.5 h-3.5" /> {{ __('ui.until') }}</label>
                 <div class="grid grid-cols-3 gap-1">
                     {{-- Hora --}}
                     <select x-model="slot.fin_hora" @change="updateHoraFin(index)"
@@ -126,17 +126,17 @@
                 </div>
                 <input type="hidden" :name="`disponibilidad[${index}][hora_fin]`" :value="slot.fin">
                 <p class="text-xs text-white/60 mt-1">
-                    Seleccionado: <strong x-text="formatHora(slot.fin)"></strong>
+                    {{ __('ui.selected_time') }} <strong x-text="formatHora(slot.fin)"></strong>
                 </p>
             </div>
 
             {{-- Botón eliminar --}}
             <div class="lg:col-span-1">
                 <button type="button" @click="removeSlot(index)"
-                        class="w-full bg-red-500/40 hover:bg-red-500/60 px-3 py-2 rounded-lg text-sm"
+                        class="w-full inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/15 px-3 py-2 rounded-lg text-sm"
                         x-show="slots.length > 1"
-                        title="Eliminar horario">
-                    🗑️
+                        title="{{ __('ui.delete_schedule') }}">
+                    <x-icon name="trash" class="w-4 h-4" />
                 </button>
             </div>
         </div>
@@ -144,16 +144,16 @@
 </template>
 
             <button type="button" @click="addSlot()" 
-                    class="bg-green-500/40 hover:bg-green-500/60 px-4 py-2 rounded-xl text-sm font-medium mb-4">
-                ➕ Agregar horario
+                    class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 px-4 py-2 rounded-xl text-sm font-medium mb-4">
+                <x-icon name="plus" class="w-4 h-4" /> {{ __('ui.add_schedule') }}
             </button>
 
             <div class="flex gap-3">
-                <button type="submit" class="bg-white text-brand-600 px-6 py-3 rounded-xl font-bold hover:bg-white/90 transition">
-                    Guardar Disponibilidad
+                <button type="submit" class="btn-white inline-flex items-center gap-2 px-6 py-3 font-bold">
+                    <x-icon name="check" class="w-5 h-5" /> {{ __('ui.save_availability') }}
                 </button>
                 <a href="{{ route('tutor.dashboard') }}" class="bg-white/20 hover:bg-white/30 px-6 py-3 rounded-xl font-bold transition">
-                    Cancelar
+                    {{ __('ui.cancel') }}
                 </a>
             </div>
         </form>

@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Pagar Clase')
+@section('title', __('ui.pay_class_title'))
 
 @section('content')
 <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">💳 Completar Pago</h1>
+    <h1 class="text-3xl font-bold text-gray-800 mb-6 flex items-center"><x-icon name="credit-card" class="w-7 h-7" /> {{ __('ui.complete_payment') }}</h1>
 
     @if ($errors->any())
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -18,40 +18,40 @@
 
     <!-- Resumen -->
     <div class="bg-gray-50 p-4 rounded-lg mb-6">
-        <h2 class="font-bold mb-2">Resumen de la Reserva</h2>
+        <h2 class="font-bold mb-2">{{ __('ui.booking_summary') }}</h2>
 
         <p>
-            <strong>Tutor:</strong>
+            <strong>{{ __('ui.tutor') }}:</strong>
             {{ $clase->tutor->user->nombre }}
             {{ $clase->tutor->user->apellido }}
         </p>
 
         <p>
-            <strong>Materia:</strong>
+            <strong>{{ __('ui.subject') }}:</strong>
             {{ $clase->materia->nombre }}
         </p>
 
         <p>
-            <strong>Fecha:</strong>
+            <strong>{{ __('ui.date') }}:</strong>
             {{ $clase->fecha->format('d/m/Y') }}
         </p>
 
         <p>
-            <strong>Hora:</strong>
+            <strong>{{ __('ui.time_label') }}</strong>
             {{ substr($clase->hora_inicio, 0, 5) }}
             -
             {{ substr($clase->hora_fin, 0, 5) }}
         </p>
 
         <p>
-            <strong>Duración:</strong>
+            <strong>{{ __('ui.duration') }}:</strong>
             {{ $clase->duracion_min }} minutos
         </p>
 
         <hr class="my-2">
 
         <p class="text-2xl font-bold text-green-600">
-            Total: S/ {{ $clase->precio_total }}
+            {{ __('ui.total_suffix') }} S/ {{ $clase->precio_total }}
         </p>
     </div>
 
@@ -64,30 +64,24 @@
 
         <div class="mb-4">
             <label class="block text-gray-700 font-bold mb-2">
-                Método de pago
+                {{ __('ui.payment_method_label') }}
             </label>
 
             <select name="metodo"
                     required
                     class="w-full px-3 py-2 border rounded-md">
 
-                <option value="yape">
-                    📱 Yape
-                </option>
+                <option value="yape">{{ __('ui.method_labels.yape') }}</option>
 
-                <option value="plin">
-                    📱 Plin
-                </option>
+                <option value="plin">{{ __('ui.method_labels.plin') }}</option>
 
-                <option value="tarjeta">
-                    💳 Tarjeta
-                </option>
+                <option value="tarjeta">{{ __('ui.method_labels.tarjeta') }}</option>
             </select>
         </div>
 
         <div class="mb-4">
             <label class="block text-gray-700 font-bold mb-2">
-                N° de operación / Referencia
+                {{ __('ui.operation_reference') }}
             </label>
 
             <input type="text"
@@ -100,7 +94,7 @@
 
         <div class="mb-6">
             <label class="block text-gray-700 font-bold mb-2">
-                Captura del comprobante
+                {{ __('ui.capture_receipt') }}
             </label>
 
             <input type="file"
@@ -110,26 +104,26 @@
                    class="w-full px-3 py-2 border rounded-md">
 
             <p class="text-xs text-gray-500 mt-1">
-                Sube una captura de tu Yape/Plin (JPG o PNG, máx 2MB)
+                {{ __('ui.upload_payment_capture') }}
             </p>
         </div>
 
         <button type="submit"
-                class="w-full bg-green-600 text-white py-3 rounded-md hover:bg-green-700 font-bold">
-            Enviar Pago para Validación
+                class="w-full inline-flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 font-bold">
+            <x-icon name="check-circle" class="w-5 h-5" /> {{ __('ui.send_payment_validation') }}
         </button>
     </form>
 
     <!-- Separador -->
     <div class="text-center my-4 text-gray-400 text-sm">
-        o
+        {{ __('ui.or') }}
     </div>
 
     <!-- Pago con tarjeta mediante Culqi -->
     <a href="{{ route('pagos.tarjeta', $clase->id) }}"
-       class="block w-full text-center bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-bold hover:opacity-90 transition">
+       class="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-bold hover:opacity-90 transition">
 
-        💳 Pagar con Tarjeta (Culqi)
+        <x-icon name="credit-card" class="w-5 h-5" /> {{ __('ui.pay_with_card_culqi') }}
 
     </a>
 </div>

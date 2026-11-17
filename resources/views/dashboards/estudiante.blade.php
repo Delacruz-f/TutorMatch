@@ -1,27 +1,27 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Estudiante')
+@section('title', __('ui.student_dashboard'))
 
 @section('content')
 
-<div class="bg-white p-6 rounded-lg shadow-md mb-6"> <div class="flex justify-between items-center"> <div> <h1 class="text-3xl font-bold text-gray-800">Panel de Estudiante</h1> <p class="text-gray-600">Bienvenido, {{ Auth::user()->nombre }}</p> </div>
+<div class="bg-white p-6 rounded-lg shadow-md mb-6"> <div class="flex justify-between items-center"> <div> <h1 class="text-3xl font-bold text-gray-800">{{ __('ui.student_dashboard') }}</h1> <p class="text-gray-600">{{ __('ui.welcome_user', ['name' => Auth::user()->nombre]) }}</p> </div>
     <a href="{{ route('busqueda.index') }}"
-       class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 font-bold">
-        🔍 Buscar Tutores
+       class="inline-flex items-center gap-2 bg-orange-600 text-white px-6 py-3 rounded-xl hover:bg-orange-700 font-bold">
+        <x-icon name="search" class="w-5 h-5" /> {{ __('ui.search_tutors') }}
     </a>
 </div>
 
-</div> <div class="bg-white p-6 rounded-lg shadow-md"> <h2 class="text-2xl font-bold text-gray-800 mb-4">Mis Clases</h2>
+</div> <div class="bg-white p-6 rounded-lg shadow-md"> <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ __('ui.my_classes') }}</h2>
 @if($clases->isEmpty())
 
     <div class="text-center py-8">
         <p class="text-gray-500 mb-4">
-            Aún no has reservado ninguna clase.
+            {{ __('ui.no_classes_booked') }}
         </p>
 
         <a href="{{ route('busqueda.index') }}"
-           class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-            Buscar mi primer tutor
+           class="inline-flex items-center gap-2 bg-orange-600 text-white px-6 py-2.5 rounded-xl hover:bg-orange-700">
+            <x-icon name="search" class="w-4 h-4" /> {{ __('ui.search_my_first_tutor') }}
         </a>
     </div>
 
@@ -32,12 +32,12 @@
 
             <thead class="bg-gray-100">
                 <tr>
-                    <th class="p-3 text-left">Tutor</th>
-                    <th class="p-3 text-left">Materia</th>
-                    <th class="p-3 text-left">Fecha/Hora</th>
-                    <th class="p-3 text-left">Total</th>
-                    <th class="p-3 text-left">Estado</th>
-                    <th class="p-3 text-left">Acciones</th>
+                    <th class="p-3 text-left">{{ __('ui.tutors') }}</th>
+                    <th class="p-3 text-left">{{ __('ui.subject') }}</th>
+                    <th class="p-3 text-left">{{ __('ui.class_date_time') }}</th>
+                    <th class="p-3 text-left">{{ __('ui.total') }}</th>
+                    <th class="p-3 text-left">{{ __('ui.status') }}</th>
+                    <th class="p-3 text-left">{{ __('ui.actions') }}</th>
                 </tr>
             </thead>
 
@@ -78,34 +78,34 @@
                             @php
                                 $estados = [
                                     'pendiente_pago' => [
-                                        '⏳ Pendiente de pago',
+                                        __('ui.payment_status_pending'),
                                         'bg-yellow-100 text-yellow-800'
                                     ],
                                     'pendiente' => [
-                                        '🕐 Esperando validación',
+                                        __('ui.waiting_validation'),
                                         'bg-blue-100 text-blue-800'
                                     ],
                                     'aceptada' => [
-                                        '✅ Aceptada',
+                                        __('ui.accepted'),
                                         'bg-green-100 text-green-800'
                                     ],
                                     'rechazada' => [
-                                        '❌ Rechazada',
+                                        __('ui.rejected'),
                                         'bg-red-100 text-red-800'
                                     ],
                                     'cancelada' => [
-                                        '🚫 Cancelada',
+                                        __('ui.cancelled'),
                                         'bg-gray-100 text-gray-800'
                                     ],
                                     'completada' => [
-                                        '🏁 Completada',
+                                        __('ui.completed'),
                                         'bg-purple-100 text-purple-800'
                                     ],
                                 ];
 
                                 [$texto, $colorBadge] =
                                     $estados[$clase->estado]
-                                    ?? ['Desconocido', 'bg-gray-100 text-gray-800'];
+                                    ?? [__('ui.unknown'), 'bg-gray-100 text-gray-800'];
                             @endphp
 
                             <span class="{{ $colorBadge }} text-xs px-2 py-1 rounded">
@@ -123,24 +123,24 @@
                                 @if($clase->estado === 'pendiente_pago')
 
                                     <a href="{{ route('reservas.pago', $clase->id) }}"
-                                       class="text-blue-600 hover:underline text-xs">
-                                        Pagar
+                                       class="inline-flex items-center gap-1 hover:underline text-xs">
+                                        <x-icon name="credit-card" class="w-3.5 h-3.5" /> {{ __('ui.pay') }}
                                     </a>
 
                                 {{-- Entrar a clase --}}
                                 @elseif($clase->estado === 'aceptada')
 
                                     <a href="{{ route('clases.sala', $clase->id) }}"
-                                       class="text-green-600 hover:underline text-xs font-bold">
-                                        📹 Entrar
+                                       class="inline-flex items-center gap-1 hover:underline text-xs font-bold">
+                                        <x-icon name="video" class="w-3.5 h-3.5" /> {{ __('ui.enter_class') }}
                                     </a>
 
                                 {{-- Reseñar --}}
                                 @elseif($clase->estado === 'completada' && !$clase->resena)
 
                                     <a href="{{ route('resenas.create', $clase->id) }}"
-                                       class="text-yellow-600 hover:underline text-xs">
-                                        ⭐ Reseñar
+                                       class="inline-flex items-center gap-1 hover:underline text-xs">
+                                        <x-icon name="star" class="w-3.5 h-3.5" /> {{ __('ui.write_review') }}
                                     </a>
 
                                 @endif
@@ -154,9 +154,9 @@
                                 )
 
                                     <a href="{{ route('pagos.comprobante', $clase->id) }}"
-                                       class="bg-purple-500/40 hover:bg-purple-500/60 px-3 py-1.5 rounded-lg text-xs font-medium transition"
-                                       title="Descargar comprobante">
-                                        📄 PDF
+                                       class="inline-flex items-center gap-1 bg-white/10 hover:bg-white/20 border border-white/15 px-3 py-1.5 rounded-lg text-xs font-medium transition"
+                                       title="{{ __('ui.download_receipt') }}">
+                                        <x-icon name="file-text" class="w-3.5 h-3.5" /> PDF
                                     </a>
 
                                 @endif

@@ -7,10 +7,61 @@
     --tm-teal: #5eead4;
     --tm-violet: #c4b5fd;
     --tm-orange: #fb923c;
+
+    /* Tipografia */
+    --tm-font-body: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --tm-font-display: 'Sora', 'Plus Jakarta Sans', sans-serif;
+
+    /* Color unico para todos los iconos */
+    --tm-icon: #fdba74;
+    --tm-icon-soft: rgba(253, 186, 116, 0.16);
+    --tm-icon-border: rgba(253, 186, 116, 0.38);
+
+    /* =========================================================
+       LIQUID GLASS
+       Superficies de vidrio con refraccion, brillo especular y
+       borde luminoso. Un solo lugar para todo el sistema.
+    ========================================================== */
+    --lg-blur: 22px;
+    --lg-saturate: 165%;
+    --lg-radius: 1.25rem;
+
+    /* Relleno del vidrio: gradiente diagonal + tinte oscuro translucido */
+    --lg-fill:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.055) 38%, rgba(255, 255, 255, 0.02) 62%, rgba(255, 255, 255, 0.075) 100%),
+        rgba(18, 20, 26, 0.34);
+
+    /* Relleno mas tenue (topbar, chips, elementos secundarios) */
+    --lg-fill-soft:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03) 55%),
+        rgba(16, 18, 23, 0.26);
+
+    /* Borde luminoso: claro arriba, tenue abajo (efecto lente) */
+    --lg-edge: rgba(255, 255, 255, 0.34);
+    --lg-edge-soft: rgba(255, 255, 255, 0.18);
+
+    /* Sombra: contacto corto + difusion amplia */
+    --lg-shadow:
+        0 1px 1px rgba(0, 0, 0, 0.16),
+        0 10px 24px -8px rgba(0, 0, 0, 0.34),
+        0 28px 60px -24px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+
+    --lg-shadow-hover:
+        0 1px 1px rgba(0, 0, 0, 0.18),
+        0 14px 30px -8px rgba(0, 0, 0, 0.38),
+        0 36px 72px -26px rgba(0, 0, 0, 0.46),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+
+    --lg-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html {
     min-height: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
     max-width: 100%;
     overflow-x: clip;
     background: #11100f;
@@ -19,6 +70,10 @@ html {
 body {
     position: relative;
     isolation: isolate;
+    font-family: var(--tm-font-body);
+    letter-spacing: -0.006em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
     max-width: 100%;
     color: var(--tm-ink);
@@ -33,18 +88,33 @@ body {
 body::after {
     position: fixed;
     z-index: -2;
-    inset: 0;
+    /* -6px evita el borde claro que deja el desenfoque en los extremos */
+    inset: -6px;
     background:
-        linear-gradient(115deg, rgba(8, 10, 14, 0.74), rgba(12, 14, 18, 0.54) 48%, rgba(11, 12, 16, 0.72)),
+        linear-gradient(115deg, rgba(8, 10, 14, 0.42), rgba(12, 14, 18, 0.24) 48%, rgba(11, 12, 16, 0.38)),
         url("img/vestrahorn-mountains-stokksnes-iceland.jpg") center / cover no-repeat;
     content: "";
-    opacity: 0.8;
+    /* La foto del fondo va difuminada */
+    filter: blur(7px);
+    transform: scale(1.03);
+    opacity: 0.95;
     pointer-events: none;
+}
+
+/* La portada y la vista de busqueda conservan su propio fondo */
+body:not(:has(.sidebar))::after {
+    background-image:
+        linear-gradient(115deg, rgba(8, 10, 14, 0.38), rgba(12, 14, 18, 0.2) 48%, rgba(11, 12, 16, 0.34)),
+        url("img/misurina-sunset.jpg");
+}
+
+body:not(:has(.sidebar))::before {
+    display: none;
 }
 
 body:has(nav.glass)::after {
     background-image:
-        linear-gradient(115deg, rgba(8, 10, 14, 0.74), rgba(12, 14, 18, 0.54) 48%, rgba(11, 12, 16, 0.72)),
+        linear-gradient(115deg, rgba(8, 10, 14, 0.38), rgba(12, 14, 18, 0.2) 48%, rgba(11, 12, 16, 0.34)),
         url("img/misurina-sunset.jpg");
 }
 
@@ -65,42 +135,166 @@ body > :not(.bubble) {
     z-index: 0;
 }
 
+/* =========================================================
+   TIPOGRAFIA
+========================================================== */
+h1, h2, h3, h4, h5, h6,
+.font-display {
+    font-family: var(--tm-font-display);
+    letter-spacing: -0.022em;
+}
+
+h1 {
+    line-height: 1.12;
+}
+
+h2 {
+    line-height: 1.2;
+}
+
+small,
+.text-xs {
+    letter-spacing: 0.005em;
+}
+
+/* =========================================================
+   ICONOS (un unico color en toda la app)
+========================================================== */
+.tm-icon {
+    display: inline-block;
+    flex: 0 0 auto;
+    vertical-align: -0.16em;
+    color: var(--tm-icon);
+    stroke: currentColor;
+}
+
+.tm-icon.icon-filled {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+/* Iconos de calificacion rellenos cuando el selector los activa */
+button[class*="text-orange-300"] > .tm-icon {
+    fill: currentColor;
+}
+
+/* Contenedor opcional para iconos con fondo suave */
+.icon-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.875rem;
+    color: var(--tm-icon);
+    background: var(--tm-icon-soft);
+    border: 1px solid var(--tm-icon-border);
+}
+
+.icon-chip > .tm-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* Iconos dentro de botones/enlaces se alinean con el texto */
+a > .tm-icon,
+button > .tm-icon {
+    vertical-align: -0.2em;
+}
+
+/* En botones rellenos el icono toma el color del texto para contraste */
+.btn-primary .tm-icon,
+.btn-white .tm-icon,
+.btn-glass .tm-icon,
+.btn-yellow .tm-icon,
+button[class*="bg-green-"] .tm-icon,
+button[class*="bg-red-"] .tm-icon,
+a[class*="bg-green-"] .tm-icon,
+a[class*="bg-red-"] .tm-icon {
+    color: currentColor;
+}
+
+/* Sobre superficies oscuras el icono usa el tono claro de acento */
+.glass-dark .tm-icon,
+.sidebar .tm-icon {
+    color: var(--tm-icon);
+}
+
+/* =========================================================
+   SUPERFICIES LIQUID GLASS
+   .glass / .glass-card / .glass-dark comparten el mismo
+   material; solo cambia la intensidad del tinte.
+========================================================== */
 .glass,
 .glass-card,
 .glass-dark {
     position: relative;
     color: var(--tm-ink);
-    border: 1px solid var(--tm-border);
-    box-shadow:
-        0 24px 72px rgba(0, 0, 0, 0.38),
-        inset 0 1px 0 rgba(255, 255, 255, 0.11);
-    -webkit-backdrop-filter: blur(28px) saturate(145%);
-    backdrop-filter: blur(28px) saturate(145%);
+    border: 1px solid var(--lg-edge-soft);
+    box-shadow: var(--lg-shadow);
+    -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+    backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+    /* Aisla el desenfoque para que el vidrio no se mezcle con el fondo */
+    isolation: isolate;
+}
+
+/* Brillo especular superior: la "luz" que atraviesa el vidrio */
+.glass::before,
+.glass-card::before,
+.glass-dark::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    border-radius: inherit;
+    background:
+        radial-gradient(120% 80% at 18% 0%, rgba(255, 255, 255, 0.22), transparent 58%),
+        radial-gradient(90% 60% at 100% 0%, rgba(255, 255, 255, 0.1), transparent 60%);
+    content: "";
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+/* Refraccion inferior: un halo calido muy tenue, como el borde de una lente */
+.glass::after,
+.glass-card::after,
+.glass-dark::after {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(120% 70% at 50% 118%, rgba(251, 146, 60, 0.14), transparent 62%);
+    content: "";
+    pointer-events: none;
 }
 
 .glass {
-    background:
-        linear-gradient(125deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.025) 42%, rgba(251, 146, 60, 0.06)),
-        linear-gradient(145deg, rgba(35, 35, 39, 0.42), rgba(17, 20, 23, 0.3));
+    background: var(--lg-fill);
 }
 
 .glass-card {
-    background:
-        linear-gradient(125deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.025) 46%, rgba(94, 234, 212, 0.07)),
-        rgba(29, 30, 34, 0.36);
+    background: var(--lg-fill);
+    border-color: var(--lg-edge);
 }
 
 .glass-dark {
-    background:
-        linear-gradient(110deg, rgba(20, 20, 23, 0.68), rgba(25, 29, 32, 0.58)),
-        rgba(17, 18, 20, 0.54);
+    background: var(--lg-fill-soft);
+    box-shadow:
+        0 1px 1px rgba(0, 0, 0, 0.14),
+        0 12px 28px -12px rgba(0, 0, 0, 0.36),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.glass-card {
+    transition:
+        border-color 260ms var(--lg-ease),
+        box-shadow 260ms var(--lg-ease),
+        transform 260ms var(--lg-ease);
 }
 
 .glass-card:hover {
-    border-color: rgba(251, 146, 60, 0.4);
-    box-shadow:
-        0 28px 76px rgba(0, 0, 0, 0.42),
-        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    border-color: rgba(253, 186, 116, 0.5);
+    box-shadow: var(--lg-shadow-hover);
+    transform: translateY(-2px);
 }
 
 .bubble {
@@ -114,33 +308,108 @@ body > :not(.bubble) {
 }
 
 .sidebar-item-active {
-    background: linear-gradient(100deg, rgba(251, 146, 60, 0.2), rgba(251, 146, 60, 0.055));
+    background:
+        linear-gradient(100deg, rgba(251, 146, 60, 0.26), rgba(251, 146, 60, 0.06)),
+        rgba(255, 255, 255, 0.06);
     border-left-color: var(--tm-orange);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
-.input-glass {
+/* =========================================================
+   ESTRUCTURA: SIDEBAR, TOPBAR Y TABLAS
+========================================================== */
+.sidebar {
+    border-right: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow:
+        1px 0 0 rgba(255, 255, 255, 0.06),
+        18px 0 48px -24px rgba(0, 0, 0, 0.55);
+}
+
+.sidebar nav a {
+    transition: background-color 200ms var(--lg-ease), transform 200ms var(--lg-ease);
+}
+
+.sidebar nav a:hover {
+    transform: translateX(2px);
+}
+
+header.glass-dark {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.6);
+}
+
+/* Tablas: cabecera de vidrio y filas con separadores suaves */
+main table {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 0.875rem;
+}
+
+main thead th {
+    background: rgba(255, 255, 255, 0.07);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    white-space: nowrap;
+}
+
+main tbody tr {
+    transition: background-color 160ms var(--lg-ease);
+}
+
+main tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* =========================================================
+   CAMPOS DE FORMULARIO (vidrio ahumado)
+   Se aplican a todo input/select/textarea del panel para que
+   ninguna vista quede con cajas blancas sueltas.
+========================================================== */
+.input-glass,
+main :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="hidden"]),
+.glass-card :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="hidden"]) {
     color: var(--tm-ink);
-    background: rgba(10, 12, 15, 0.34);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02)),
+        rgba(10, 12, 16, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.24);
     border-radius: 0.75rem;
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    backdrop-filter: blur(12px) saturate(150%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 1px 2px rgba(0, 0, 0, 0.18);
+    transition: border-color 180ms var(--lg-ease), box-shadow 180ms var(--lg-ease), background-color 180ms var(--lg-ease);
 }
 
-.input-glass::placeholder {
-    color: rgba(226, 232, 240, 0.62);
+.input-glass::placeholder,
+main :is(input, textarea)::placeholder,
+.glass-card :is(input, textarea)::placeholder {
+    color: rgba(226, 232, 240, 0.55);
 }
 
-.input-glass:focus {
+.input-glass:focus,
+main :is(input, select, textarea):focus,
+.glass-card :is(input, select, textarea):focus {
     color: #fff;
-    background: rgba(10, 12, 15, 0.7);
-    border-color: var(--tm-orange);
-    box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.18);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)),
+        rgba(10, 12, 16, 0.66);
+    border-color: rgba(251, 146, 60, 0.85);
+    box-shadow:
+        0 0 0 3px rgba(251, 146, 60, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    outline: none;
 }
 
-.input-glass option {
+.input-glass option,
+main select option,
+.glass-card select option {
     color: #1f2937;
     background: #fff;
+}
+
+/* Casillas y radios sobre vidrio */
+main input[type="checkbox"],
+main input[type="radio"] {
+    accent-color: #fb923c;
 }
 
 .glass :is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]):not(a):not(button):not(option):not([class*="bg-white"]),
@@ -156,15 +425,27 @@ main :is(div, section, article)[class~="bg-white"] :is([class*="text-gray-"], [c
 
 main :is(div, section, article)[class~="bg-white"] {
     color: var(--tm-ink);
-    border: 1px solid rgba(255, 255, 255, 0.19);
+    border: 1px solid var(--lg-edge-soft);
+    background: var(--lg-fill);
+    box-shadow: var(--lg-shadow);
+    -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+    backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+    isolation: isolate;
+    /* Las tarjetas antiguas usaban rounded-lg; se elevan al radio del sistema */
+    border-radius: var(--lg-radius);
+}
+
+/* Brillo especular tambien en las tarjetas antiguas */
+main :is(div, section, article)[class~="bg-white"]::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    border-radius: inherit;
     background:
-        linear-gradient(125deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.025) 50%, rgba(251, 146, 60, 0.055)),
-        rgba(27, 28, 31, 0.42);
-    box-shadow:
-        0 18px 52px rgba(0, 0, 0, 0.27),
-        inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    -webkit-backdrop-filter: blur(26px) saturate(145%);
-    backdrop-filter: blur(26px) saturate(145%);
+        radial-gradient(120% 80% at 18% 0%, rgba(255, 255, 255, 0.2), transparent 58%),
+        radial-gradient(90% 60% at 100% 0%, rgba(255, 255, 255, 0.09), transparent 60%);
+    content: "";
+    pointer-events: none;
 }
 
 main :is(div, section, article)[class~="bg-gray-50"],
@@ -176,13 +457,11 @@ main :is(div, section, article)[class~="bg-purple-50"],
 main :is(div, section, article)[class~="bg-indigo-50"],
 main :is(div, section, article)[class~="bg-amber-50"] {
     color: var(--tm-ink);
-    border-color: rgba(255, 255, 255, 0.18);
-    background:
-        linear-gradient(125deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.025) 54%, rgba(251, 146, 60, 0.045)),
-        rgba(23, 26, 31, 0.48);
-    box-shadow: 0 16px 44px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    -webkit-backdrop-filter: blur(24px) saturate(145%);
-    backdrop-filter: blur(24px) saturate(145%);
+    border-color: var(--lg-edge-soft);
+    background: var(--lg-fill-soft);
+    box-shadow: var(--lg-shadow);
+    -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
+    backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturate));
 }
 
 main :is(div, section, article):is([class~="bg-gray-50"], [class~="bg-yellow-50"], [class~="bg-green-50"], [class~="bg-red-50"], [class~="bg-blue-50"], [class~="bg-purple-50"], [class~="bg-indigo-50"], [class~="bg-amber-50"]) :is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]) {
@@ -279,50 +558,160 @@ main :is(div, section, article):is([class~="bg-gray-100"], [class~="bg-slate-100
 }
 
 main button[type="submit"],
+.glass-card button[type="submit"],
 .btn-primary,
 .btn-glass,
 .btn-white,
 .btn-yellow {
+    position: relative;
     min-height: 44px;
     font-weight: 700;
-    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+        transform 200ms var(--lg-ease),
+        box-shadow 200ms var(--lg-ease),
+        filter 200ms var(--lg-ease);
+}
+
+/* Brillo que recorre el boton al pasar el cursor */
+main button[type="submit"]::after,
+.glass-card button[type="submit"]::after,
+.btn-primary::after,
+.btn-glass::after,
+.btn-white::after,
+.btn-yellow::after {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: -60%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    content: "";
+    transform: skewX(-18deg);
+    transition: left 520ms var(--lg-ease);
+    pointer-events: none;
+}
+
+main button[type="submit"]:not(:disabled):hover::after,
+.glass-card button[type="submit"]:not(:disabled):hover::after,
+.btn-primary:hover::after,
+.btn-glass:hover::after,
+.btn-white:hover::after,
+.btn-yellow:hover::after {
+    left: 120%;
 }
 
 main button[type="submit"]:not(:disabled):hover,
+.glass-card button[type="submit"]:not(:disabled):hover,
 .btn-primary:hover,
 .btn-glass:hover,
 .btn-white:hover,
 .btn-yellow:hover {
     transform: translateY(-2px);
-    filter: brightness(1.04);
+    filter: brightness(1.05);
+}
+
+main button[type="submit"]:not(:disabled):active,
+.glass-card button[type="submit"]:not(:disabled):active,
+.btn-primary:active,
+.btn-glass:active,
+.btn-white:active,
+.btn-yellow:active {
+    transform: translateY(0) scale(0.985);
 }
 
 .btn-primary {
     color: #fff;
-    background: linear-gradient(120deg, #ea580c, #f97316 54%, #c2410c);
-    box-shadow: 0 10px 26px rgba(234, 88, 12, 0.27);
+    border-radius: 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 55%),
+        linear-gradient(120deg, rgba(234, 88, 12, 0.9), rgba(249, 115, 22, 0.84) 58%, rgba(217, 72, 15, 0.9));
+    box-shadow:
+        0 1px 1px rgba(0, 0, 0, 0.2),
+        0 10px 24px -8px rgba(234, 88, 12, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
 }
 
 .btn-glass,
 .btn-white {
     color: #24140c;
-    background: linear-gradient(135deg, #fff7ed, #fed7aa);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.24);
+    border-radius: 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 60%),
+        linear-gradient(135deg, rgba(255, 247, 237, 0.9), rgba(254, 215, 170, 0.82));
+    box-shadow:
+        0 1px 1px rgba(0, 0, 0, 0.14),
+        0 10px 24px -10px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
 }
 
 .btn-yellow {
     color: #25130a;
-    background: linear-gradient(135deg, #fdba74, #f97316);
-    box-shadow: 0 8px 22px rgba(234, 88, 12, 0.2);
+    border-radius: 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 58%),
+        linear-gradient(135deg, rgba(253, 186, 116, 0.88), rgba(249, 115, 22, 0.84));
+    box-shadow:
+        0 1px 1px rgba(0, 0, 0, 0.16),
+        0 10px 24px -10px rgba(234, 88, 12, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
+}
+
+/* Botones blancos sueltos (bg-white + texto de marca) en las vistas:
+   se les da el mismo material de vidrio claro que .btn-white */
+main button[type="submit"][class*="bg-white"],
+main a[class*="bg-white"][class*="text-brand-"],
+.glass-card button[type="submit"][class*="bg-white"] {
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 60%),
+        linear-gradient(135deg, rgba(255, 247, 237, 0.92), rgba(254, 215, 170, 0.84));
+    box-shadow:
+        0 1px 1px rgba(0, 0, 0, 0.14),
+        0 10px 24px -10px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
+}
+
+/* Al pasar el cursor el boton se vuelve un poco mas solido */
+.btn-white:hover,
+.btn-glass:hover {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 60%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(255, 237, 213, 0.94));
+}
+
+.btn-yellow:hover {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 58%),
+        linear-gradient(135deg, rgba(249, 115, 22, 0.94), rgba(234, 88, 12, 0.92));
+}
+
+.btn-primary:hover {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 55%),
+        linear-gradient(120deg, rgba(234, 88, 12, 0.98), rgba(249, 115, 22, 0.94) 58%, rgba(217, 72, 15, 0.98));
 }
 
 .rol-card {
     background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.025) 54%, rgba(251, 146, 60, 0.08)),
-        rgba(24, 25, 28, 0.4);
-    border-color: rgba(255, 255, 255, 0.24);
-    -webkit-backdrop-filter: blur(22px) saturate(140%);
-    backdrop-filter: blur(22px) saturate(140%);
+        linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.03) 54%, rgba(251, 146, 60, 0.08)),
+        rgba(24, 25, 28, 0.26);
+    border-color: rgba(255, 255, 255, 0.26);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
 }
 
 .rol-card:hover,
@@ -364,6 +753,11 @@ main :is(h1, h2, h3) {
     text-wrap: balance;
 }
 
+/* Espaciado minimo entre elementos de linea con iconos */
+main :is(h1, h2, h3, h4) > .tm-icon {
+    margin-right: 0.45rem;
+}
+
 main a:not(.btn-white):not(.btn-yellow):not(.btn-glass):not(.btn-primary) {
     text-decoration-color: rgba(251, 146, 60, 0.55);
     text-underline-offset: 0.2em;
@@ -382,7 +776,7 @@ main a:not(.btn-white):not(.btn-yellow):not(.btn-glass):not(.btn-primary) {
 
     body::after {
         background-position: 58% center;
-        opacity: 0.7;
+        opacity: 0.85;
     }
 
     main {
@@ -397,11 +791,37 @@ main a:not(.btn-white):not(.btn-yellow):not(.btn-glass):not(.btn-primary) {
         white-space: nowrap;
     }
 
+    /* En pantallas pequenas se reduce el desenfoque para que rinda mejor */
     .glass,
     .glass-card,
-    .glass-dark {
-        -webkit-backdrop-filter: blur(18px) saturate(140%);
-        backdrop-filter: blur(18px) saturate(140%);
+    .glass-dark,
+    main :is(div, section, article)[class~="bg-white"],
+    main :is(div, section, article):is([class~="bg-gray-50"], [class~="bg-yellow-50"], [class~="bg-green-50"], [class~="bg-red-50"], [class~="bg-blue-50"], [class~="bg-purple-50"], [class~="bg-indigo-50"], [class~="bg-amber-50"]) {
+        -webkit-backdrop-filter: blur(12px) saturate(150%);
+        backdrop-filter: blur(12px) saturate(150%);
+    }
+
+    /* En movil el vidrio se aclara un poco para mantener el contraste */
+    .glass,
+    .glass-card {
+        background:
+            linear-gradient(145deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.06) 40%, rgba(255, 255, 255, 0.03) 62%, rgba(255, 255, 255, 0.08) 100%),
+            rgba(18, 20, 26, 0.42);
+    }
+
+    /* Las tarjetas no se elevan al tocar (evita saltos en tactil) */
+    .glass-card:hover {
+        transform: none;
+    }
+
+    /* Botones a ancho completo cuando van solos en una fila */
+    main form > button[type="submit"]:only-child {
+        width: 100%;
+    }
+
+    /* El fondo ya viene difuminado; en movil se reduce para que rinda mejor */
+    body::after {
+        filter: blur(5px);
     }
 
     .bubble {

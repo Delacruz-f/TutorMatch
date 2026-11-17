@@ -9,12 +9,30 @@
 .env
 .env.backup
 .env.production
+
+# Bases de datos locales (SQLite) y volcados SQL
+*.sqlite
+*.sqlite3
+/database/*.sqlite
+/database/*.sqlite3
+*.sql
+
+# Archivos generados por Laravel
+/bootstrap/cache/*.php
+/storage/logs/*.log
+
+# Subidas de usuarios (comprobantes, fotos, documentos privados)
+/storage/app/public/*
+!/storage/app/public/.gitignore
+/storage/app/private/*
+!/storage/app/private/.gitignore
 .phpactor.json
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+.phpunit.result.cache
 /auth.json
 /.fleet
 /.idea

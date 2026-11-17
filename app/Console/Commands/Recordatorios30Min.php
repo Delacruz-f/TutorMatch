@@ -35,7 +35,8 @@ class Recordatorios30Min extends Command
                 $clase->estudiante_id,
                 '⏰ Tu clase comienza en 30 min',
                 "Clase de {$clase->materia->nombre} con {$clase->tutor->user->nombre} a las " . substr($clase->hora_inicio, 0, 5) . ".",
-                route('clases.sala', $clase->id)
+                route('clases.sala', $clase->id),
+                'clase'
             );
 
             // Notificación al tutor
@@ -43,7 +44,8 @@ class Recordatorios30Min extends Command
                 $clase->tutor->user_id,
                 '⏰ Tu clase comienza en 30 min',
                 "Clase de {$clase->materia->nombre} con {$clase->estudiante->nombre} a las " . substr($clase->hora_inicio, 0, 5) . ".",
-                route('clases.sala', $clase->id)
+                route('clases.sala', $clase->id),
+                'clase'
             );
 
             // Email al estudiante

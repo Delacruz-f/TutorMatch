@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notificacion;
 use App\Models\Pago;
 use App\Models\Clase;
 use Illuminate\Http\Request;
@@ -49,11 +50,21 @@ class PagoApprovalController extends Controller
         $pago->clase->update(['estado' => 'pendiente']);
 
         // Notificar al tutor
-        \App\Models\Notificacion::enviar(
+        Notificacion::enviar(
             $pago->clase->tutor->user_id,
             'Nueva solicitud de clase',
             "Tienes una nueva solicitud de clase de {$pago->user->nombre} para {$pago->clase->materia->nombre}.",
-            route('tutor.dashboard')
+            route('tutor.dashboard'),
+            'clase'
+        );
+
+        // Notificar al estudiante que su pago fue validado
+        Notificacion::enviar(
+            $pago->user_id,
+            '✅ Pago validado',
+            "Tu pago de S/ {$pago->monto} para la clase de {$pago->clase->materia->nombre} fue aprobado.",
+            route('estudiante.dashboard'),
+            'pago'
         );
     }
 
@@ -84,11 +95,20 @@ class PagoApprovalController extends Controller
                 'plan_vence' => $fechaFin,
             ]);
 
-            \App\Models\Notificacion::enviar(
+            Notificacion::enviar(
                 $tutor->user_id,
                 '¡Suscripción activada!',
                 "Tu plan {$plan} está activo hasta el " . $fechaFin->format('d/m/Y') . ".",
-                route('tutor.dashboard')
+                route('tutor.suscripciones.index'),
+                'suscripcion'
+            );
+
+            Notificacion::enviar(
+                $pago->user_id,
+                '✅ Pago validado',
+                "Tu pago de S/ {$pago->monto} para el plan {$plan} fue aprobado.",
+                route('tutor.suscripciones.index'),
+                'pago'
             );
         }
     }
@@ -119,6 +139,24 @@ class PagoApprovalController extends Controller
                 'estado' => 'pendiente_pago',
                 'notas' => 'Pago rechazado: ' . $request->motivo,
             ]);
+
+            // Notificar al estudiante dueño del pago
+            \App\Models\Notificacion::enviar(
+                $pago->user_id,
+                '❌ Tu pago fue rechazado',
+                "El pago de la clase de {$pago->clase->materia->nombre} fue rechazado. Motivo: {$request->motivo}",
+                route('reservas.pago', $pago->clase_id),
+                'pago'
+            );
+        } else {
+            // Pago de suscripción rechazado
+            \App\Models\Notificacion::enviar(
+                $pago->user_id,
+                '❌ Tu pago fue rechazado',
+                "Tu pago de suscripción fue rechazado. Motivo: {$request->motivo}",
+                route('tutor.suscripciones.index'),
+                'pago'
+            );
         }
 
         return back()->with('success', 'Pago rechazado.');
