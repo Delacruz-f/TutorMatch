@@ -2,6 +2,8 @@
 
 @section('title', __('ui.register_title'))
 
+@section('hideLanguageSwitcher', true)
+
 @section('bodyClass', 'flex items-center justify-center p-4 py-8 overflow-x-hidden')
 
 @push('styles')
@@ -20,6 +22,7 @@
     <div class="bubble w-40 h-40 bottom-20 right-20" style="animation-delay: 2s;"></div>
 
     <div class="register-card glass-card rounded-3xl p-8 sm:p-10 w-full max-w-lg relative z-10 text-white">
+        <div class="absolute top-4 right-4 z-20">@include('partials.language-switcher')</div>
 
         <div class="flex flex-col items-center mb-8">
             <div class="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center mb-4 border border-white/20 overflow-hidden">
@@ -97,8 +100,8 @@
             <div>
                 <label class="block text-sm font-medium mb-2">{{ __('ui.register_as') }}</label>
                 <select name="rol" class="input-glass w-full px-4 py-3 rounded-xl transition-all">
-                    <option value="estudiante" {{ old('rol') == 'estudiante' ? 'selected' : '' }} class="text-gray-800">{{ __('ui.student') }}</option>
-                    <option value="tutor" {{ old('rol') == 'tutor' ? 'selected' : '' }} class="text-gray-800">{{ __('ui.tutor') }}</option>
+                    <option value="estudiante" {{ old('rol', request('rol', 'estudiante')) === 'estudiante' ? 'selected' : '' }} class="text-gray-800">{{ __('ui.student') }}</option>
+                    <option value="tutor" {{ old('rol', request('rol', 'estudiante')) === 'tutor' ? 'selected' : '' }} class="text-gray-800">{{ __('ui.tutor') }}</option>
                 </select>
             </div>
 

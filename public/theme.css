@@ -781,6 +781,15 @@ main a:not(.btn-white):not(.btn-yellow):not(.btn-glass):not(.btn-primary) {
 
     main {
         padding: 0.875rem;
+        min-width: 0;
+    }
+
+    main :is(.grid, .flex) > * {
+        min-width: 0;
+    }
+
+    main :is(form, input, select, textarea, button) {
+        max-width: 100%;
     }
 
     main table {

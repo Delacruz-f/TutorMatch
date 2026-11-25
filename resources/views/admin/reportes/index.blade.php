@@ -62,24 +62,26 @@
 <div class="bg-white p-6 rounded-lg shadow mt-6">
     <h2 class="text-xl font-bold mb-3 flex items-center"><x-icon name="trophy" class="w-5 h-5" /> {{ __('ui.top_tutors_period') }}</h2>
     @if($topTutores->isEmpty())
-        <p class="text-gray-500">{{ __('ui.no_data') }}</p>
+        <p class="text-white/70">{{ __('ui.no_data') }}</p>
     @else
-        <table class="w-full text-sm">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="p-2 text-left">{{ __('ui.tutor') }}</th>
-                    <th class="p-2 text-left">{{ __('ui.generated_income') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($topTutores as $t)
-                    <tr class="border-b">
-                        <td class="p-2">{{ $t->tutor->user->nombre }} {{ $t->tutor->user->apellido }}</td>
-                        <td class="p-2 font-bold text-green-600">S/ {{ number_format($t->total, 2) }}</td>
+        <div class="overflow-x-auto">
+            <table class="w-full min-w-[24rem] text-sm">
+                <thead>
+                    <tr class="border-b border-white/20 text-white/80">
+                        <th class="p-3 text-left">{{ __('ui.tutor') }}</th>
+                        <th class="p-3 text-left">{{ __('ui.generated_income') }}</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach($topTutores as $t)
+                        <tr class="border-b border-white/10 hover:bg-white/5">
+                            <td class="p-3">{{ $t->tutor->user->nombre }} {{ $t->tutor->user->apellido }}</td>
+                            <td class="whitespace-nowrap p-3 font-bold text-green-300">S/ {{ number_format($t->total, 2) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     @endif
 </div>
 @endsection

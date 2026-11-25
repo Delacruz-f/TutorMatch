@@ -28,77 +28,85 @@
 
 @section('content')
 
-    <div class="bubble w-96 h-96 top-20 left-10"></div>
-    <div class="bubble w-64 h-64 top-1/3 right-10" style="animation-delay: 3s;"></div>
-    <div class="bubble w-48 h-48 bottom-20 left-1/3" style="animation-delay: 5s;"></div>
+    <div class="bubble w-40 h-40 sm:w-96 sm:h-96 top-20 left-2 sm:left-10"></div>
+    <div class="bubble w-32 h-32 sm:w-64 sm:h-64 top-1/3 right-2 sm:right-10" style="animation-delay: 3s;"></div>
+    <div class="bubble w-24 h-24 sm:w-48 sm:h-48 bottom-20 left-1/3" style="animation-delay: 5s;"></div>
 
     <!-- NAVBAR -->
     <nav class="glass sticky top-0 z-50 px-4 sm:px-8">
-        <div class="max-w-7xl mx-auto flex justify-between items-center h-16">
-            <a href="/" class="text-2xl font-bold font-display tracking-tight">TutorMatch</a>
-            <div class="flex items-center gap-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-y-3 py-3 sm:h-16 sm:flex-nowrap sm:gap-x-4 sm:py-0">
+            <a href="/" class="shrink-0 text-xl sm:text-2xl font-bold font-display tracking-tight">TutorMatch</a>
+            <div class="sm:ml-auto">
                 @include('partials.language-switcher')
-                @auth
+            </div>
+
+            @auth
+                <div class="flex w-full items-center justify-center gap-3 sm:w-auto sm:justify-end">
                     <span class="hidden sm:inline text-white/90">{{ __('ui.hello', ['name' => auth()->user()->nombre]) }}</span>
                     @php
                         $rutaDash = auth()->user()->rol === 'administrador' ? 'admin.dashboard' :
                                    (auth()->user()->rol === 'tutor' ? 'tutor.dashboard' : 'estudiante.dashboard');
                     @endphp
-                    <a href="{{ route($rutaDash) }}" class="btn-white px-5 py-2 rounded-xl font-bold text-sm">{{ __('ui.my_dashboard') }}</a>
+                    <a href="{{ route($rutaDash) }}" class="btn-white whitespace-nowrap px-3 sm:px-5 py-2 rounded-xl font-bold text-sm">{{ __('ui.my_dashboard') }}</a>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
-                        <button type="submit" class="text-white/80 hover:text-white text-sm px-3">{{ __('ui.sign_out_short') }}</button>
+                        <button type="submit" class="whitespace-nowrap text-white/80 hover:text-white text-sm px-2 sm:px-3">{{ __('ui.sign_out_short') }}</button>
                     </form>
-                @endauth
+                </div>
+            @endauth
 
-                @guest
-                    <a href="{{ route('login') }}" class="text-white/90 hover:text-white px-4 py-2 font-medium text-sm">{{ __('ui.sign_in') }}</a>
-                    <a href="{{ route('register') }}" class="btn-white px-5 py-2 rounded-xl font-bold text-sm">{{ __('ui.register') }}</a>
-                @endguest
-            </div>
+            @guest
+                <div class="flex w-full items-center gap-3 sm:w-auto sm:justify-end">
+                    <a href="{{ route('login') }}" class="flex-1 rounded-xl border border-white/30 bg-white/10 px-2 py-2 text-center font-medium text-xs text-white/90 hover:bg-white/20 sm:flex-none sm:border-0 sm:bg-transparent sm:px-4 sm:text-left sm:text-sm">{{ __('ui.sign_in') }}</a>
+                    <a href="{{ route('register') }}" class="btn-white flex-1 whitespace-nowrap px-2 py-2 text-center rounded-xl font-bold text-xs sm:flex-none sm:px-5 sm:text-sm">{{ __('ui.register') }}</a>
+                </div>
+            @endguest
         </div>
     </nav>
 
     <!-- HERO -->
-    <section class="relative max-w-7xl mx-auto px-4 sm:px-8 py-20 text-center">
-        <div class="glass rounded-3xl p-10 sm:p-16 relative z-10">
+    <section class="relative max-w-7xl mx-auto px-4 sm:px-8 py-12 sm:py-20 text-center">
+        <div class="glass rounded-3xl p-5 sm:p-16 relative z-10">
             <span class="inline-flex items-center gap-2 bg-white/15 border border-white/20 px-4 py-1.5 rounded-full text-sm mb-6">
                 <x-icon name="graduation-cap" class="w-4 h-4" /> {{ __('ui.welcome_badge') }}
             </span>
-            <h1 class="text-4xl sm:text-6xl font-extrabold mb-6 leading-tight">
+            <h1 class="text-3xl sm:text-6xl font-extrabold mb-6 leading-tight">
                 {{ __('ui.welcome_hero_prefix') }}<br>
                 <span class="text-orange-300">{{ __('ui.welcome_hero_highlight') }}</span>
                 {{ __('ui.welcome_hero_suffix') }}
             </h1>
-            <p class="text-lg sm:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+            <p class="text-base sm:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
                 {{ __('ui.welcome_description') }}
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{{ route('register') }}" class="btn-white inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-lg">
+                <a href="{{ route('register', ['rol' => 'estudiante']) }}" class="btn-white w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-4 rounded-2xl font-bold text-base sm:text-lg">
                     <x-icon name="graduation-cap" class="w-5 h-5" /> {{ __('ui.start_as_student') }}
                 </a>
-                <a href="{{ route('register') }}" class="btn-yellow inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-lg">
+                <a href="{{ route('register', ['rol' => 'tutor']) }}" class="btn-yellow w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-4 rounded-2xl font-bold text-base sm:text-lg">
                     <x-icon name="user-check" class="w-5 h-5" /> {{ __('ui.become_tutor') }}
+                </a>
+                <a href="{{ route('busqueda.index') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-4 rounded-2xl border border-white/40 bg-white/10 hover:bg-white/20 font-bold text-base sm:text-lg transition">
+                    <x-icon name="search" class="w-5 h-5" /> {{ __('ui.search_tutors') }}
                 </a>
             </div>
         </div>
     </section>
 
     <!-- FEATURES -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-8 py-16 relative z-10">
-        <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">{{ __('ui.why_tutormatch') }}</h2>
+    <section class="max-w-7xl mx-auto px-4 sm:px-8 py-12 sm:py-16 relative z-10">
+        <h2 class="text-2xl sm:text-4xl font-bold text-center mb-8 sm:mb-12">{{ __('ui.why_tutormatch') }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass-card rounded-3xl p-8 text-center">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 text-center">
                 <div class="icon-chip mx-auto mb-4 !w-16 !h-16 rounded-2xl"><x-icon name="search" class="!w-7 !h-7" /></div>
                 <h3 class="text-xl font-bold mb-3">{{ __('ui.smart_search') }}</h3>
                 <p class="text-white/80">{{ __('ui.smart_search_description') }}</p>
             </div>
-            <div class="glass-card rounded-3xl p-8 text-center">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 text-center">
                 <div class="icon-chip mx-auto mb-4 !w-16 !h-16 rounded-2xl"><x-icon name="video" class="!w-7 !h-7" /></div>
                 <h3 class="text-xl font-bold mb-3">{{ __('ui.virtual_classes') }}</h3>
                 <p class="text-white/80">{{ __('ui.virtual_classes_description') }}</p>
             </div>
-            <div class="glass-card rounded-3xl p-8 text-center">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 text-center">
                 <div class="icon-chip mx-auto mb-4 !w-16 !h-16 rounded-2xl"><x-icon name="badge-check" class="!w-7 !h-7" /></div>
                 <h3 class="text-xl font-bold mb-3">{{ __('ui.verified_tutors') }}</h3>
                 <p class="text-white/80">{{ __('ui.verified_tutors_description') }}</p>

@@ -21,6 +21,10 @@ class ClaseTutorController extends Controller
             return redirect()->route('tutor.register.form');
         }
 
+        if (in_array($tutor->aprobacion, ['pendiente', 'rechazado'], true)) {
+            return view('dashboards.tutor');
+        }
+
         $solicitudes = Clase::with(['estudiante', 'materia'])
             ->where('tutor_id', $tutor->id)
             ->pendientes()

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Pago;
 use App\Models\Suscripcion;
 use App\Models\Tutor;
 use Illuminate\Http\Request;
@@ -22,6 +23,11 @@ class SuscripcionAdminController extends Controller
         }
 
         $suscripciones = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
+        $solicitudesPendientes = Pago::with('user')
+            ->where('concepto', 'suscripcion')
+            ->where('estado', 'pendiente')
+            ->orderBy('created_at', 'asc')
+            ->get();
 
         // Estadísticas
         $activas = Suscripcion::where('estado', 'activa')->where('fecha_fin', '>=', now()->toDateString())->count();
@@ -35,7 +41,13 @@ class SuscripcionAdminController extends Controller
             ->orderBy('plan', 'desc')
             ->get();
 
-        return view('admin.suscripciones.index', compact('suscripciones', 'activas', 'ingresosMes', 'tutoresDestacados'));
+        return view('admin.suscripciones.index', compact(
+            'suscripciones',
+            'solicitudesPendientes',
+            'activas',
+            'ingresosMes',
+            'tutoresDestacados'
+        ));
     }
 
     public function cancelar($id)

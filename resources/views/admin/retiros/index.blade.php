@@ -59,31 +59,33 @@
     @if($historial->isEmpty())
         <p class="text-gray-500">{{ __('ui.no_history') }}</p>
     @else
-        <table class="w-full text-sm">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="p-2 text-left">{{ __('ui.date') }}</th>
-                    <th class="p-2 text-left">{{ __('ui.tutor') }}</th>
-                    <th class="p-2 text-left">{{ __('ui.amount') }}</th>
-                    <th class="p-2 text-left">{{ __('ui.status') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($historial as $h)
-                    <tr class="border-b">
-                        <td class="p-2">{{ $h->updated_at->format('d/m/Y') }}</td>
-                        <td class="p-2">{{ $h->tutor->user->nombre }}</td>
-                        <td class="p-2">S/ {{ $h->monto }}</td>
-                        <td class="p-2">
-                            <span class="text-xs px-2 py-1 rounded
-                                {{ $h->estado === 'pagado' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                {{ __('ui.status_labels.' . $h->estado) }}
-                            </span>
-                        </td>
+        <div class="overflow-x-auto">
+            <table class="w-full min-w-[36rem] text-sm">
+                <thead>
+                    <tr class="border-b border-white/20 text-white/80">
+                        <th class="p-3 text-left">{{ __('ui.date') }}</th>
+                        <th class="p-3 text-left">{{ __('ui.tutor') }}</th>
+                        <th class="p-3 text-left">{{ __('ui.amount') }}</th>
+                        <th class="p-3 text-left">{{ __('ui.status') }}</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach($historial as $h)
+                        <tr class="border-b border-white/10 hover:bg-white/5">
+                            <td class="whitespace-nowrap p-3">{{ $h->updated_at->format('d/m/Y') }}</td>
+                            <td class="p-3">{{ $h->tutor->user->nombre }}</td>
+                            <td class="whitespace-nowrap p-3">S/ {{ $h->monto }}</td>
+                            <td class="p-3">
+                                <span class="whitespace-nowrap rounded px-2 py-1 text-xs
+                                    {{ $h->estado === 'pagado' ? 'bg-green-400/20 text-green-100' : 'bg-red-400/20 text-red-100' }}">
+                                    {{ __('ui.status_labels.' . $h->estado) }}
+                                </span>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     @endif
 </div>
 @endsection

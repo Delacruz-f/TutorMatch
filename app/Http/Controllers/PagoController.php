@@ -7,6 +7,7 @@ use App\Models\Notificacion;
 use App\Models\Pago;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PagoController extends Controller
 {
@@ -73,6 +74,40 @@ class PagoController extends Controller
         return redirect()->route('estudiante.dashboard')
             ->with('success', 'Pago enviado. Espera la validación del administrador.');
     }
+
+    /**
+     * Mostrar el historial de pagos de clases del estudiante autenticado.
+     */
+    public function historial()
+    {
+        $pagos = Pago::with(['clase.tutor.user', 'clase.materia'])
+            ->where('user_id', Auth::id())
+            ->where('concepto', 'clase')
+            ->whereHas('clase')
+            ->orderByDesc('created_at')
+            ->paginate(15);
+
+        return view('pagos.historial', compact('pagos'));
+    }
+
+    /**
+     * Mostrar el comprobante original de un pago propio.
+     */
+    public function comprobanteImagen($pagoId)
+    {
+        $pago = Pago::where('user_id', Auth::id())
+            ->where('concepto', 'clase')
+            ->findOrFail($pagoId);
+
+        abort_unless(
+            $pago->comprobante_imagen
+                && Storage::disk('public')->exists($pago->comprobante_imagen),
+            404
+        );
+
+        return Storage::disk('public')->response($pago->comprobante_imagen);
+    }
+
     /**
  * Descargar comprobante en PDF de una clase pagada.
  */

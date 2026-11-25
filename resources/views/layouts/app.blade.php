@@ -423,6 +423,15 @@
 
                     </a>
 
+                    <a
+                        href="{{ route('pagos.historial') }}"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-white/90 hover:bg-white/15 transition {{ $rutaActual === 'pagos.historial' ? 'sidebar-item-active' : '' }}">
+
+                        <x-icon name="receipt" class="w-5 h-5 shrink-0" />
+                        <span class="font-medium">{{ __('ui.payment_history') }}</span>
+
+                    </a>
+
                 @endif
 
 
@@ -502,14 +511,14 @@
 
     <!-- CONTENIDO PRINCIPAL -->
 
-    <div class="flex-1 lg:ml-64 flex flex-col min-h-screen">
+    <div class="w-full min-w-0 flex-1 lg:ml-64 flex flex-col min-h-screen">
 
 
         <!-- TOPBAR -->
 
         <header class="glass-dark sticky top-0 z-30 px-4 sm:px-6 py-3">
 
-            <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center justify-between gap-2 sm:gap-4">
 
                 {{-- El badge de notificaciones del topbar usa $notifNoLeidas --}}
                 @auth
@@ -520,7 +529,7 @@
 
                 <!-- HAMBURGER + TÍTULO -->
 
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
 
                     <button
                         @click="sidebarOpen = !sidebarOpen"
@@ -531,7 +540,7 @@
                     </button>
 
 
-                    <h2 class="text-white font-semibold text-lg">
+                    <h2 class="min-w-0 truncate text-white font-semibold text-base sm:text-lg">
                         @yield('title', 'TutorMatch')
                     </h2>
 
@@ -540,7 +549,7 @@
 
                 <!-- ACCIONES DERECHA -->
 
-                <div class="flex items-center gap-3">
+                <div class="flex shrink-0 items-center gap-1 sm:gap-3">
 
                     @include('partials.language-switcher')
 
@@ -662,7 +671,7 @@
 
                         <a
                             href="{{ route('login') }}"
-                            class="text-white hover:bg-white/10 px-4 py-2 rounded-lg transition text-sm">
+                            class="hidden sm:inline-flex text-white hover:bg-white/10 px-4 py-2 rounded-lg transition text-sm">
 
                             {{ __('ui.sign_in') }}
 
@@ -673,7 +682,7 @@
 
                         <a
                             href="{{ route('register') }}"
-                            class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-medium">
+                            class="hidden sm:inline-flex btn-primary text-white px-4 py-2 rounded-lg text-sm font-medium">
 
                             {{ __('ui.register') }}
 
@@ -699,7 +708,7 @@
 
         <!-- CONTENIDO -->
 
-        <main class="flex-1 p-4 sm:p-6">
+        <main class="w-full min-w-0 flex-1 p-4 sm:p-6">
 
             @yield('content')
 

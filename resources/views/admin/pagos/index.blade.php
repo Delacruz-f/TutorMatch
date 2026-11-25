@@ -18,28 +18,36 @@
         <div class="space-y-4 mb-8">
             @foreach($pagosPendientes as $pago)
                 <div class="border rounded-lg p-4 bg-yellow-50">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <p class="text-sm text-gray-500">{{ __('ui.student') }}</p>
-                            <p class="font-bold">{{ $pago->user->nombre }} {{ $pago->user->apellido }}</p>
-                            <p class="text-sm">{{ $pago->user->email }}</p>
+                    <div class="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-3">
+                        <div class="min-w-0">
+                            <p class="text-sm text-gray-500">{{ $pago->concepto === 'suscripcion' ? __('ui.tutor') : __('ui.student') }}</p>
+                            <p class="break-words font-bold">{{ $pago->user->nombre }} {{ $pago->user->apellido }}</p>
+                            <p class="break-words text-sm">{{ $pago->user->email }}</p>
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-500">{{ __('ui.tutor_or_subject') }}</p>
-                            <p class="font-bold">{{ $pago->clase->tutor->user->nombre }} {{ $pago->clase->tutor->user->apellido }}</p>
-                            <p class="text-sm">{{ $pago->clase->materia->nombre }}</p>
-                            <p class="text-sm">{{ $pago->clase->fecha->format('d/m/Y') }} {{ substr($pago->clase->hora_inicio, 0, 5) }}</p>
+                        <div class="min-w-0">
+                            @if($pago->concepto === 'suscripcion')
+                                @php
+                                    preg_match('/PLAN:(destacado|premium)/', (string) $pago->referencia, $planMatch);
+                                @endphp
+                                <p class="text-sm text-gray-500">{{ __('ui.subscriptions') }}</p>
+                                <p class="font-bold">{{ isset($planMatch[1]) ? __('ui.plan_labels.' . $planMatch[1]) : __('ui.plan') }}</p>
+                            @elseif($pago->clase)
+                                <p class="text-sm text-gray-500">{{ __('ui.tutor_or_subject') }}</p>
+                                <p class="font-bold">{{ $pago->clase->tutor->user->nombre }} {{ $pago->clase->tutor->user->apellido }}</p>
+                                <p class="text-sm">{{ $pago->clase->materia->nombre }}</p>
+                                <p class="text-sm">{{ $pago->clase->fecha->format('d/m/Y') }} {{ substr($pago->clase->hora_inicio, 0, 5) }}</p>
+                            @endif
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <p class="text-sm text-gray-500">{{ __('ui.payment') }}</p>
                             <p class="font-bold text-green-600 text-lg">S/ {{ $pago->monto }}</p>
                             <p class="text-sm">{{ __('ui.payment_method_short') }} {{ strtoupper($pago->metodo) }}</p>
-                            <p class="text-sm">{{ __('ui.reference_short') }} {{ $pago->referencia }}</p>
+                            <p class="break-words text-sm">{{ __('ui.reference_short') }} {{ $pago->referencia }}</p>
                         </div>
                     </div>
-                    <div class="mt-3 flex gap-3 items-center">
-                        <a href="{{ Storage::url($pago->comprobante_imagen) }}" target="_blank"
-                           class="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600">
+                    <div class="mt-3 flex flex-wrap items-start gap-2">
+                        <a href="{{ route('admin.pagos.comprobante', $pago->id) }}" target="_blank"
+                           class="rounded bg-blue-500 px-4 py-2 text-center text-sm text-white hover:bg-blue-600">
                             {{ __('ui.view_receipt') }}
                         </a>
                         <form method="POST" action="{{ route('admin.pagos.aprobar', $pago->id) }}">
@@ -49,11 +57,11 @@
                             </button>
                         </form>
                         <form method="POST" action="{{ route('admin.pagos.rechazar', $pago->id) }}"
-                              onsubmit="return confirm(@json(__('ui.capture_payment_confirm')))" class="flex gap-2">
+                              onsubmit="return confirm(@json(__('ui.capture_payment_confirm')))" class="flex w-full flex-wrap gap-2 sm:w-auto">
                             @csrf
                             <input type="text" name="motivo" placeholder="{{ __('ui.reject_reason') }}" required
-                                   class="px-3 py-1 border rounded text-sm">
-                            <button type="submit" class="inline-flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-red-700">
+                                   class="min-w-0 flex-1 rounded border px-3 py-2 text-sm sm:w-40">
+                            <button type="submit" class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700">
                                 <x-icon name="x" class="w-4 h-4" /> {{ __('ui.reject') }}
                             </button>
                         </form>

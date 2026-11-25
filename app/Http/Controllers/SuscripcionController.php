@@ -72,7 +72,8 @@ class SuscripcionController extends Controller
                 $admin->id,
                 'Nueva solicitud de suscripción',
                 "El tutor {$tutor->user->nombre} solicitó el plan {$request->plan}.",
-                route('admin.pagos.index')
+                route('admin.suscripciones.index'),
+                'suscripcion'
             );
         }
 

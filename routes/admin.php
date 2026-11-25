@@ -47,6 +47,9 @@ Route::middleware('role:administrador')
         Route::get('/pagos', [PagoApprovalController::class, 'index'])
             ->name('pagos.index');
 
+        Route::get('/pagos/{id}/comprobante', [PagoApprovalController::class, 'comprobante'])
+            ->name('pagos.comprobante');
+
         Route::post('/pagos/{id}/aprobar', [PagoApprovalController::class, 'aprobar'])
             ->name('pagos.aprobar');
 

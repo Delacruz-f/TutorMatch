@@ -8,6 +8,12 @@
     <p class="text-white/80">{{ __('ui.plans_for_tutors') }}</p>
 </div>
 
+@if(session('success') || session('error'))
+    <div class="rounded-xl p-4 mb-6 {{ session('error') ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}" role="alert">
+        {{ session('success') ?? session('error') }}
+    </div>
+@endif
+
 <!-- Stats -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
     <div class="glass rounded-2xl p-5 text-white">
@@ -22,6 +28,53 @@
         <p class="text-xs text-white/70 uppercase">{{ __('ui.featured_tutors') }}</p>
         <p class="text-3xl font-bold">{{ $tutoresDestacados->count() }}</p>
     </div>
+</div>
+
+<!-- Solicitudes pendientes -->
+<div class="glass rounded-2xl p-6 text-white mb-6">
+    <h2 class="text-xl font-bold mb-4">{{ __('ui.pending_payments') }} ({{ $solicitudesPendientes->count() }})</h2>
+    @if($solicitudesPendientes->isEmpty())
+        <p class="text-white/60 text-sm">{{ __('ui.no_payments_pending') }}</p>
+    @else
+        <div class="space-y-3">
+            @foreach($solicitudesPendientes as $solicitud)
+                @php
+                    preg_match('/PLAN:(destacado|premium)/i', (string) $solicitud->referencia, $planMatch);
+                @endphp
+                <div class="bg-white/10 rounded-xl p-4 border border-white/15 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="min-w-0 flex-1">
+                        <p class="font-bold">{{ $solicitud->user->nombre }} {{ $solicitud->user->apellido }}</p>
+                        <p class="text-sm text-white/75 break-words">
+                            {{ __('ui.plan') }}:
+                            {{ isset($planMatch[1]) ? __('ui.plan_labels.' . strtolower($planMatch[1])) : __('ui.unknown') }}
+                            · S/ {{ $solicitud->monto }}
+                        </p>
+                        <p class="text-xs text-white/60 break-words">{{ __('ui.reference_short') }} {{ $solicitud->referencia }}</p>
+                    </div>
+                    <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
+                        <a href="{{ route('admin.pagos.comprobante', $solicitud->id) }}" target="_blank"
+                           class="w-full rounded bg-blue-500 px-3 py-2 text-center text-sm text-white hover:bg-blue-600 sm:w-auto">
+                            {{ __('ui.view_receipt') }}
+                        </a>
+                        <form method="POST" action="{{ route('admin.pagos.aprobar', $solicitud->id) }}">
+                            @csrf
+                            <button type="submit" class="w-full rounded bg-green-600 px-3 py-2 text-sm text-white hover:bg-green-700 sm:w-auto">
+                                {{ __('ui.approve') }}
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ route('admin.pagos.rechazar', $solicitud->id) }}" class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                            @csrf
+                            <input type="text" name="motivo" placeholder="{{ __('ui.reject_reason') }}" required
+                                   class="w-full min-w-0 rounded px-3 py-2 text-sm text-gray-900 sm:w-40">
+                            <button type="submit" class="w-full rounded bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-700 sm:w-auto">
+                                {{ __('ui.reject') }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
 </div>
 
 <!-- Tutores activos con plan -->

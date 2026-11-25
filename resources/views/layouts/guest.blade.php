@@ -44,7 +44,7 @@
 
 <body class="@yield('bodyClass')">
 
-    @unless (View::hasSection('languageSwitcherInNavbar'))
+    @unless (View::hasSection('languageSwitcherInNavbar') || View::hasSection('hideLanguageSwitcher'))
         <div class="fixed right-4 top-4 z-50 rounded-xl border border-white/15 bg-slate-950/70 p-1 shadow-lg backdrop-blur">
             @include('partials.language-switcher')
         </div>

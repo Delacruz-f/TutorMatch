@@ -77,6 +77,18 @@ class NotificacionController extends Controller
             $notif->update(['leida' => true]);
         }
 
+        if (
+            Auth::user()->rol === 'administrador'
+            && $notif->tipo === 'pago'
+            && str_contains(mb_strtolower($notif->titulo), 'comprobante')
+        ) {
+            return redirect()->route('admin.pagos.index');
+        }
+
+        if (Auth::user()->rol === 'estudiante' && $notif->tipo === 'pago') {
+            return redirect()->route('estudiante.dashboard');
+        }
+
         // Si tiene URL interna, redirige ahí; si no, vuelve atrás.
         if ($url = $notif->urlSegura()) {
             return redirect($url);

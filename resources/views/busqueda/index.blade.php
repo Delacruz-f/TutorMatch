@@ -5,10 +5,10 @@
 @section('content')
 
 <!-- Header -->
-<div class="glass rounded-2xl p-6 text-white mb-6">
+<div class="glass rounded-2xl p-4 sm:p-6 text-white mb-6">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-            <h1 class="text-3xl font-bold mb-1 flex items-center"><x-icon name="search" class="w-7 h-7" /> {{ __('ui.search_tutors_heading') }}</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-1 flex items-center gap-2"><x-icon name="search" class="w-7 h-7 shrink-0" /> {{ __('ui.search_tutors_heading') }}</h1>
             <p class="text-white/80">{{ __('ui.find_perfect_tutor') }}</p>
         </div>
         <div class="bg-white/15 rounded-xl px-4 py-2 border border-white/20">
@@ -19,7 +19,7 @@
 </div>
 
 <!-- Formulario de filtros -->
-<div class="glass rounded-2xl p-6 text-white mb-6">
+<div class="glass rounded-2xl p-4 sm:p-6 text-white mb-6">
     <form method="GET" action="{{ route('busqueda.index') }}" class="space-y-4">
         <!-- Fila 1 -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -117,7 +117,7 @@
                     </div>
                 @endif
 
-                <div class="p-6 text-white">
+                <div class="p-4 sm:p-6 text-white">
                     {{-- Foto y datos --}}
                     <div class="flex items-center mb-4">
                         @if($tutor->user->foto)
@@ -161,13 +161,13 @@
                     </div>
 
                     {{-- Precio y CTA --}}
-                    <div class="flex justify-between items-center pt-4 border-t border-white/20">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 pt-4 border-t border-white/20">
                         <div>
                             <span class="text-2xl font-bold text-green-300">S/ {{ $tutor->precio_hora }}</span>
                             <span class="text-xs text-white/60">{{ __('ui.per_hour') }}</span>
                         </div>
                         <a href="{{ route('busqueda.tutor', $tutor->id) }}"
-                           class="btn-white inline-flex items-center gap-1.5 px-4 py-2 text-sm font-bold">
+                           class="btn-white inline-flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-bold">
                             {{ __('ui.view_profile') }} <x-icon name="arrow-right" class="w-4 h-4" />
                         </a>
                     </div>

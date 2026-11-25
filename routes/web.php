@@ -194,12 +194,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Reservas y pagos - Estudiante
     Route::middleware('role:estudiante')->group(function () {
 
+        Route::get('/pagos/historial', [PagoController::class, 'historial'])
+            ->name('pagos.historial');
+
+        Route::get('/pagos/{pagoId}/imagen', [PagoController::class, 'comprobanteImagen'])
+            ->name('pagos.imagen');
+
         // Reservas
         Route::get('/reservar/{tutorId}', [ReservaController::class, 'create'])
             ->name('reservas.create');
 
         Route::post('/reservar', [ReservaController::class, 'store'])
             ->name('reservas.store');
+
+        Route::post('/clases/{id}/cancelar', [ReservaController::class, 'cancelar'])
+            ->name('clases.cancelar');
 
         // Pagos
         Route::get('/pago/{claseId}', [PagoController::class, 'show'])

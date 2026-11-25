@@ -159,39 +159,38 @@
     @else
         <div class="space-y-2">
             @foreach($notificaciones as $n)
-                <div class="rounded-2xl p-4 flex gap-4 transition border {{ $n->leida ? 'glass border-white/15' : 'bg-blue-600/30 border-blue-300/40 backdrop-blur-md' }}">
-
-                    <div class="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-lg bg-white/15 border border-white/20">
-                        {{ $iconoTipo[$n->tipo] ?? '🔔' }}
-                    </div>
-
-                    <div class="flex-1 min-w-0">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <h3 class="font-bold text-white">
-                                {{ $n->titulo }}
-                            </h3>
-
-                            <span class="text-[11px] uppercase tracking-wide font-bold px-2 py-0.5 rounded-full bg-white/20 text-white">
-                                {{ $n->tipoLabel() }}
-                            </span>
-
-                            @if(! $n->leida)
-                                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white">
-                                    Nueva
-                                </span>
-                            @endif
+                <div class="rounded-2xl p-4 flex flex-col gap-3 transition border sm:flex-row sm:items-start {{ $n->leida ? 'glass border-white/15' : 'bg-blue-600/30 border-blue-300/40 backdrop-blur-md' }}">
+                    <div class="flex min-w-0 flex-1 gap-3 sm:gap-4">
+                        <div class="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-lg bg-white/15 border border-white/20">
+                            {{ $iconoTipo[$n->tipo] ?? '🔔' }}
                         </div>
 
-                        <p class="text-sm text-white/80 mt-1 break-words">{{ $n->mensaje }}</p>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <h3 class="break-words font-bold text-white">{{ $n->titulo }}</h3>
 
-                        <p class="text-xs text-white/60 mt-2">
-                            {{ $n->created_at->diffForHumans() }}
-                            <span class="text-white/30">·</span>
-                            {{ $n->created_at->format('d/m/Y H:i') }}
-                        </p>
+                                <span class="text-[11px] uppercase tracking-wide font-bold px-2 py-0.5 rounded-full bg-white/20 text-white">
+                                    {{ $n->tipoLabel() }}
+                                </span>
+
+                                @if(! $n->leida)
+                                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white">
+                                        Nueva
+                                    </span>
+                                @endif
+                            </div>
+
+                            <p class="text-sm text-white/80 mt-1 break-words">{{ $n->mensaje }}</p>
+
+                            <p class="text-xs text-white/60 mt-2">
+                                {{ $n->created_at->diffForHumans() }}
+                                <span class="text-white/30">·</span>
+                                {{ $n->created_at->format('d/m/Y H:i') }}
+                            </p>
+                        </div>
                     </div>
 
-                    <div class="shrink-0 flex flex-col sm:flex-row items-end sm:items-center gap-1">
+                    <div class="flex w-full shrink-0 flex-row justify-end gap-2 sm:w-auto sm:items-center">
                         <form method="POST" action="{{ route('notificaciones.leer', $n->id) }}">
                             @csrf
                             <button type="submit"

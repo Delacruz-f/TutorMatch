@@ -3,8 +3,16 @@
 @section('title', __('ui.register_tutor_title'))
 
 @section('content')
-<div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md" x-data="tutorForm()">
+<div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md" x-data="tutorForm(@js($slotsIniciales))">
     <h2 class="text-3xl font-bold text-center mb-6 text-blue-600">{{ __('ui.complete_tutor_profile') }}</h2>
+
+    @if($tutor)
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <p class="font-bold">{{ __('ui.profile_rejected') }}</p>
+            <p>{{ __('ui.reason') }} {{ $tutor->motivo_rechazo }}</p>
+            <p class="mt-1">{{ __('ui.keep_existing_documents') }}</p>
+        </div>
+    @endif
 
     @if ($errors->any())
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -24,12 +32,12 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
                 <label class="block text-gray-700 text-sm font-bold mb-2">{{ __('ui.university_required') }}</label>
-                <input type="text" name="universidad" value="{{ old('universidad') }}" required
+                <input type="text" name="universidad" value="{{ old('universidad', $tutor?->universidad) }}" required
                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block text-gray-700 text-sm font-bold mb-2">{{ __('ui.degree_required') }}</label>
-                <input type="text" name="carrera" value="{{ old('carrera') }}" required
+                <input type="text" name="carrera" value="{{ old('carrera', $tutor?->carrera) }}" required
                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
             </div>
         </div>
@@ -39,17 +47,17 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
                 <label class="block text-gray-700 text-sm font-bold mb-2">{{ __('ui.national_id_number') }} *</label>
-                <input type="text" name="dni_numero" value="{{ old('dni_numero') }}" required maxlength="15"
+                <input type="text" name="dni_numero" value="{{ old('dni_numero', $tutor?->dni_numero) }}" required maxlength="15"
                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
-                <label class="block text-gray-700 text-sm font-bold mb-2">{{ __('ui.national_id_photo_help') }}</label>
-                <input type="file" name="dni_foto" accept="image/*" required
+                <label class="block text-gray-700 text-sm font-bold mb-2">{{ __('ui.national_id_photo_help') }}{{ $tutor?->dni_foto ? '' : ' *' }}</label>
+                <input type="file" name="dni_foto" accept="image/*" {{ $tutor?->dni_foto ? '' : 'required' }}
                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
             </div>
             <div class="md:col-span-2">
-                <label class="block text-gray-700 text-sm font-bold mb-2">{{ __('ui.resume_pdf_help') }}</label>
-                <input type="file" name="cv_archivo" accept="application/pdf" required
+                <label class="block text-gray-700 text-sm font-bold mb-2">{{ __('ui.resume_pdf_help') }}{{ $tutor?->cv_archivo ? '' : ' *' }}</label>
+                <input type="file" name="cv_archivo" accept="application/pdf" {{ $tutor?->cv_archivo ? '' : 'required' }}
                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
             </div>
         </div>
@@ -70,7 +78,7 @@
                 @foreach($materias as $materia)
                     <label class="flex items-center space-x-2 p-2 border rounded hover:bg-blue-50 cursor-pointer">
                         <input type="checkbox" name="materias[]" value="{{ $materia->id }}"
-                               {{ in_array($materia->id, old('materias', [])) ? 'checked' : '' }}
+                               {{ in_array($materia->id, old('materias', $materiasSeleccionadas)) ? 'checked' : '' }}
                                class="rounded text-blue-600">
                         <span>{{ $materia->nombre }}</span>
                     </label>
@@ -79,7 +87,7 @@
         </div>
         <div class="mb-6">
             <label class="block text-gray-700 text-sm font-bold mb-2">{{ __('ui.price_per_hour') }}</label>
-            <input type="number" name="precio_hora" value="{{ old('precio_hora') }}" required min="5" max="500" step="0.01"
+            <input type="number" name="precio_hora" value="{{ old('precio_hora', $tutor?->precio_hora) }}" required min="5" max="500" step="0.01"
                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
         </div>
 
@@ -132,9 +140,9 @@
 </div>
 
 <script>
-function tutorForm() {
+function tutorForm(initialSlots) {
     return {
-        slots: [{ dia: '', inicio: '', fin: '' }],
+        slots: initialSlots,
         addSlot() {
             this.slots.push({ dia: '', inicio: '', fin: '' });
         },

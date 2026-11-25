@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ClaseCanceladaMail;
 use App\Models\Clase;
+use App\Models\Notificacion;
+use App\Models\Pago;
 use App\Models\Tutor;
 use App\Models\Materia;
 use App\Models\Configuracion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 
 class ReservaController extends Controller
@@ -19,6 +25,9 @@ class ReservaController extends Controller
     {
         $tutor = Tutor::with(['user', 'materias', 'disponibilidades'])
             ->where('aprobacion', 'aprobado')
+            ->whereHas('user', function ($query) {
+                $query->where('estado', 'activo');
+            })
             ->findOrFail($tutorId);
 
         // Validar que el estudiante no esté reservando a sí mismo
@@ -49,7 +58,11 @@ class ReservaController extends Controller
             'duracion_min' => 'required|integer|in:60,90,120',
         ]);
 
-        $tutor = Tutor::where('aprobacion', 'aprobado')->findOrFail($request->tutor_id);
+        $tutor = Tutor::where('aprobacion', 'aprobado')
+            ->whereHas('user', function ($query) {
+                $query->where('estado', 'activo');
+            })
+            ->findOrFail($request->tutor_id);
         $materia = Materia::findOrFail($request->materia_id);
 
         // Calcular hora de fin
@@ -107,5 +120,131 @@ class ReservaController extends Controller
 
         return redirect()->route('reservas.pago', $clase->id)
             ->with('success', 'Reserva creada. Ahora completa el pago.');
+    }
+
+    public function cancelar(int $id)
+    {
+        $resultado = DB::transaction(function () use ($id) {
+            $clase = Clase::where('estudiante_id', Auth::id())
+                ->lockForUpdate()
+                ->findOrFail($id);
+
+            if (! in_array($clase->estado, ['pendiente_pago', 'pendiente', 'aceptada'], true)) {
+                return ['error' => __('ui.class_cancel_not_allowed')];
+            }
+
+            $inicioClase = Carbon::parse($clase->fecha->format('Y-m-d').' '.$clase->hora_inicio);
+            if ($inicioClase->lt(now()->addHours(24))) {
+                return ['error' => __('ui.cancel_24_hours_required')];
+            }
+
+            $clase->load(['tutor.user', 'estudiante', 'materia']);
+
+            $pago = Pago::where('clase_id', $clase->id)
+                ->where('concepto', 'clase')
+                ->whereIn('estado', ['pagado', 'pendiente'])
+                ->lockForUpdate()
+                ->first();
+
+            $estabaPagado = $pago?->estado === 'pagado';
+            $reembolsoSolicitado = $pago !== null;
+            $montoReembolso = $pago?->monto;
+
+            if ($pago) {
+                $pago->update(['estado' => 'reembolsado']);
+            }
+
+            $clase->update([
+                'estado' => 'cancelada',
+                'sala_jitsi' => null,
+                'pago_liberado' => false,
+            ]);
+
+            return compact('clase', 'estabaPagado', 'reembolsoSolicitado', 'montoReembolso');
+        });
+
+        if (isset($resultado['error'])) {
+            return redirect()->route('estudiante.dashboard')->with('error', $resultado['error']);
+        }
+
+        /** @var Clase $clase */
+        $clase = $resultado['clase'];
+        $datosClase = [
+            'subject' => $clase->materia->nombre,
+            'date' => $clase->fecha->format('d/m/Y'),
+        ];
+        if ($resultado['reembolsoSolicitado']) {
+            $datosClase['amount'] = number_format((float) $resultado['montoReembolso'], 2);
+        }
+
+        $mensajeEstudiante = $resultado['reembolsoSolicitado']
+            ? __('ui.class_cancelled_student_refund_notification', $datosClase)
+            : __('ui.class_cancelled_student_notification', $datosClase);
+
+        Notificacion::enviar(
+            $clase->estudiante_id,
+            __('ui.class_cancelled_notification_title'),
+            $mensajeEstudiante,
+            route('estudiante.dashboard'),
+            'clase'
+        );
+
+        if ($resultado['estabaPagado']) {
+            Notificacion::enviar(
+                $clase->tutor->user_id,
+                __('ui.class_cancelled_notification_title'),
+                __('ui.class_cancelled_tutor_notification', $datosClase + [
+                    'student' => $clase->estudiante->nombre,
+                ]),
+                route('tutor.dashboard'),
+                'clase'
+            );
+        }
+
+        if ($resultado['reembolsoSolicitado']) {
+            Notificacion::enviarARol(
+                'administrador',
+                __('ui.class_refund_admin_notification_title'),
+                __('ui.class_refund_admin_notification_message', $datosClase + [
+                    'student' => $clase->estudiante->nombre,
+                    'tutor' => $clase->tutor->user->nombre.' '.$clase->tutor->user->apellido,
+                ]),
+                route('admin.pagos.index'),
+                'pago'
+            );
+        }
+
+        try {
+            Mail::to($clase->tutor->user->email)->send(
+                new ClaseCanceladaMail(
+                    $clase,
+                    false,
+                    $resultado['reembolsoSolicitado'],
+                    $resultado['montoReembolso']
+                )
+            );
+        } catch (\Exception $e) {
+            Log::error('Error enviando email de cancelación al tutor: '.$e->getMessage(), [
+                'clase_id' => $clase->id,
+            ]);
+        }
+
+        try {
+            Mail::to($clase->estudiante->email)->send(
+                new ClaseCanceladaMail(
+                    $clase,
+                    true,
+                    $resultado['reembolsoSolicitado'],
+                    $resultado['montoReembolso']
+                )
+            );
+        } catch (\Exception $e) {
+            Log::error('Error enviando email de confirmación de cancelación al estudiante: '.$e->getMessage(), [
+                'clase_id' => $clase->id,
+            ]);
+        }
+
+        return redirect()->route('estudiante.dashboard')
+            ->with('success', __('ui.class_cancel_success'));
     }
 }

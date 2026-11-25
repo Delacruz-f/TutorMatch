@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Notificacion;
 use App\Models\Pago;
 use App\Models\Clase;
+use App\Models\Suscripcion;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PagoApprovalController extends Controller
 {
@@ -30,70 +33,110 @@ class PagoApprovalController extends Controller
     }
 
     /**
+     * Mostrar el comprobante sin depender de la URL pública del almacenamiento.
+     */
+    public function comprobante($id)
+    {
+        $pago = Pago::findOrFail($id);
+
+        abort_unless(
+            $pago->comprobante_imagen
+                && Storage::disk('public')->exists($pago->comprobante_imagen),
+            404
+        );
+
+        return Storage::disk('public')->response($pago->comprobante_imagen);
+    }
+
+    /**
      * Aprobar un pago
      */
     public function aprobar($id)
-{
-    $pago = Pago::with('clase')->findOrFail($id);
+    {
+        $resultado = DB::transaction(function () use ($id) {
+            $pago = Pago::with(['clase.tutor.user', 'clase.materia', 'user.tutor'])
+                ->lockForUpdate()
+                ->findOrFail($id);
 
-    if ($pago->estado !== 'pendiente') {
-        return back()->with('error', 'Este pago ya fue procesado.');
-    }
+            if ($pago->estado !== 'pendiente') {
+                return ['error' => 'Este pago ya fue procesado.'];
+            }
 
-    $pago->update([
-        'estado' => 'pagado',
-        'pagado_en' => now(),
-    ]);
+            $tutor = null;
+            $plan = null;
 
-    // Si es pago de CLASE
-    if ($pago->concepto === 'clase' && $pago->clase) {
-        $pago->clase->update(['estado' => 'pendiente']);
+            if ($pago->concepto === 'suscripcion') {
+                if (! preg_match('/PLAN:(destacado|premium)\b/i', (string) $pago->referencia, $matches)) {
+                    return ['error' => 'No se pudo identificar el plan de esta solicitud.'];
+                }
 
-        // Notificar al tutor
-        Notificacion::enviar(
-            $pago->clase->tutor->user_id,
-            'Nueva solicitud de clase',
-            "Tienes una nueva solicitud de clase de {$pago->user->nombre} para {$pago->clase->materia->nombre}.",
-            route('tutor.dashboard'),
-            'clase'
-        );
+                $plan = strtolower($matches[1]);
+                $tutor = $pago->user?->tutor;
 
-        // Notificar al estudiante que su pago fue validado
-        Notificacion::enviar(
-            $pago->user_id,
-            '✅ Pago validado',
-            "Tu pago de S/ {$pago->monto} para la clase de {$pago->clase->materia->nombre} fue aprobado.",
-            route('estudiante.dashboard'),
-            'pago'
-        );
-    }
+                if (! $tutor) {
+                    return ['error' => 'La solicitud no está asociada a un tutor.'];
+                }
+            }
 
-    // Si es pago de SUSCRIPCIÓN
-    if ($pago->concepto === 'suscripcion') {
-        // Extraer plan de la referencia ("REF | PLAN:premium")
-        $plan = 'destacado';
-        if (preg_match('/PLAN:(\w+)/', $pago->referencia, $matches)) {
-            $plan = $matches[1];
+            $pago->update([
+                'estado' => 'pagado',
+                'pagado_en' => now(),
+            ]);
+
+            if ($pago->concepto === 'clase' && $pago->clase) {
+                $pago->clase->update(['estado' => 'pendiente']);
+            }
+
+            if ($pago->concepto === 'suscripcion') {
+                $fechaInicio = now();
+                $fechaFin = $fechaInicio->copy()->addMonth();
+
+                Suscripcion::create([
+                    'tutor_id' => $tutor->id,
+                    'plan' => $plan,
+                    'monto' => $pago->monto,
+                    'fecha_inicio' => $fechaInicio,
+                    'fecha_fin' => $fechaFin,
+                    'estado' => 'activa',
+                ]);
+
+                $tutor->update([
+                    'plan' => $plan,
+                    'plan_vence' => $fechaFin,
+                ]);
+            }
+
+            return ['pago' => $pago, 'tutor' => $tutor, 'plan' => $plan];
+        });
+
+        if (isset($resultado['error'])) {
+            return back()->with('error', $resultado['error']);
         }
 
-        $tutor = $pago->user->tutor;
-        if ($tutor) {
-            $fechaInicio = now();
-            $fechaFin = now()->addMonth();
+        $pago = $resultado['pago'];
 
-            \App\Models\Suscripcion::create([
-                'tutor_id' => $tutor->id,
-                'plan' => $plan,
-                'monto' => $pago->monto,
-                'fecha_inicio' => $fechaInicio,
-                'fecha_fin' => $fechaFin,
-                'estado' => 'activa',
-            ]);
+        if ($pago->concepto === 'clase' && $pago->clase) {
+            Notificacion::enviar(
+                $pago->clase->tutor->user_id,
+                'Nueva solicitud de clase',
+                "Tienes una nueva solicitud de clase de {$pago->user->nombre} para {$pago->clase->materia->nombre}.",
+                route('tutor.dashboard'),
+                'clase'
+            );
 
-            $tutor->update([
-                'plan' => $plan,
-                'plan_vence' => $fechaFin,
-            ]);
+            Notificacion::enviar(
+                $pago->user_id,
+                '✅ Pago validado',
+                "Tu pago de S/ {$pago->monto} para la clase de {$pago->clase->materia->nombre} fue aprobado.",
+                route('estudiante.dashboard'),
+                'pago'
+            );
+        }
+
+        if ($pago->concepto === 'suscripcion') {
+            $tutor = $resultado['tutor'];
+            $plan = $resultado['plan'];
+            $fechaFin = $tutor->fresh()->plan_vence;
 
             Notificacion::enviar(
                 $tutor->user_id,
@@ -111,10 +154,9 @@ class PagoApprovalController extends Controller
                 'pago'
             );
         }
-    }
 
-    return back()->with('success', 'Pago aprobado.');
-}
+        return back()->with('success', 'Pago aprobado.');
+    }
 
     /**
      * Rechazar un pago

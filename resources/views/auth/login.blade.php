@@ -2,6 +2,8 @@
 
 @section('title', __('ui.login_title'))
 
+@section('hideLanguageSwitcher', true)
+
 @section('bodyClass', 'flex items-center justify-center p-4 overflow-hidden')
 
 @push('styles')
@@ -25,6 +27,7 @@
     <div class="bubble w-24 h-24 top-1/2 right-1/4" style="animation-delay: 4s;"></div>
 
     <div class="login-card glass-card rounded-3xl p-8 sm:p-10 w-full max-w-md relative z-10 text-white">
+        <div class="absolute top-4 right-4 z-20">@include('partials.language-switcher')</div>
 
         <!-- Logo / Icono -->
         <div class="flex flex-col items-center mb-8">

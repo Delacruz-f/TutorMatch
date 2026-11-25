@@ -15,19 +15,19 @@
     <div class="lg:col-span-2 space-y-6">
 
         {{-- Card principal del tutor --}}
-        <div class="glass rounded-2xl p-6 text-white">
+        <div class="glass rounded-2xl p-4 sm:p-6 text-white">
             <div class="flex flex-col sm:flex-row items-start gap-6">
                 @if($tutor->user->foto)
-                    <img src="{{ Storage::url($tutor->user->foto) }}" class="w-28 h-28 rounded-2xl object-cover border-2 border-white/40 shadow-lg">
+                    <img src="{{ Storage::url($tutor->user->foto) }}" class="w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-2xl object-cover border-2 border-white/40 shadow-lg">
                 @else
-                    <div class="w-28 h-28 rounded-2xl bg-gradient-to-br from-brand-400 to-purple-500 flex items-center justify-center text-4xl font-bold border-2 border-white/40 shadow-lg">
+                    <div class="w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-2xl bg-gradient-to-br from-brand-400 to-purple-500 flex items-center justify-center text-4xl font-bold border-2 border-white/40 shadow-lg">
                         {{ substr($tutor->user->nombre, 0, 1) }}
                     </div>
                 @endif
 
                 <div class="flex-1">
                     <div class="flex flex-wrap items-start gap-3 mb-2">
-                        <h1 class="text-3xl font-bold">
+                        <h1 class="break-words text-2xl sm:text-3xl font-bold">
                             {{ $tutor->user->nombre }} {{ $tutor->user->apellido }}
                         </h1>
                         @if($tutor->plan !== 'basico')
@@ -40,11 +40,11 @@
                         @endif
                     </div>
 
-                    <p class="text-white/80 mb-3 flex items-center gap-2">
+                    <p class="text-white/80 mb-3 flex flex-wrap items-center gap-2">
                         <x-icon name="graduation-cap" class="w-4 h-4" /> {{ $tutor->carrera }} · {{ $tutor->universidad }}
                     </p>
 
-                    <div class="flex items-center gap-2 bg-white/15 rounded-xl px-3 py-2 inline-flex border border-white/20">
+                    <div class="inline-flex max-w-full items-center gap-2 bg-white/15 rounded-xl px-3 py-2 border border-white/20">
                         <x-icon name="star" class="w-5 h-5 icon-filled" />
                         <span class="font-bold text-lg">{{ number_format($tutor->calificacion_promedio, 1) }}</span>
                         <span class="text-white/70 text-sm">({{ $tutor->total_resenas }} {{ __('ui.review_count') }})</span>
@@ -99,9 +99,9 @@
         </div>
 
         {{-- Reseñas --}}
-        <div class="glass rounded-2xl p-6 text-white">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold flex items-center gap-2"><x-icon name="star" class="w-6 h-6 icon-filled" /> {{ __('ui.reviews') }}</h2>
+        <div class="glass rounded-2xl p-4 sm:p-6 text-white">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
+                <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2"><x-icon name="star" class="w-6 h-6 icon-filled shrink-0" /> {{ __('ui.reviews') }}</h2>
                 <span class="bg-white/15 px-3 py-1 rounded-full text-sm">
                 {{ $resenas->count() }} {{ __('ui.total_count') }}
                 </span>
@@ -151,7 +151,7 @@
 
     <!-- COLUMNA DERECHA: RESERVAR -->
     <div class="lg:col-span-1">
-        <div class="glass rounded-2xl p-6 text-white sticky top-20">
+        <div class="glass rounded-2xl p-4 sm:p-6 text-white lg:sticky lg:top-20">
 
             <div class="text-center mb-6 pb-6 border-b border-white/20">
                 <p class="text-sm text-white/70 mb-1">{{ __('ui.hourly_rate') }}</p>
