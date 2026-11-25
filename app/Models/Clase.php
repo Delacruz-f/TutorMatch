@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Clase extends Model
 {
@@ -26,28 +28,38 @@ class Clase extends Model
     ];
 
     // Relaciones
-    public function estudiante()
+    public function estudiante(): BelongsTo
     {
         return $this->belongsTo(User::class, 'estudiante_id');
     }
 
-    public function tutor()
+    public function tutor(): BelongsTo
     {
         return $this->belongsTo(Tutor::class);
     }
 
-    public function materia()
+    public function materia(): BelongsTo
     {
         return $this->belongsTo(Materia::class);
     }
 
-    public function pago()
+    public function pago(): HasOne
     {
         return $this->hasOne(Pago::class);
     }
 
-    public function resena()
+    public function resena(): HasOne
     {
         return $this->hasOne(Resena::class);
+    }
+
+    // Scopes
+
+    /**
+     * Clases en estado pendiente (solicitudes esperando respuesta del tutor).
+     */
+    public function scopePendientes($query)
+    {
+        return $query->where('estado', 'pendiente');
     }
 }

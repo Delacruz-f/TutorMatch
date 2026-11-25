@@ -74,6 +74,9 @@ class BusquedaController extends Controller
             'disponibilidades',
         ])
         ->where('aprobacion', 'aprobado')
+        ->whereHas('user', function ($query) {
+            $query->where('estado', 'activo');
+        })
         ->findOrFail($id);
 
         // Obtener reseñas visibles del tutor

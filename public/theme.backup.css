@@ -1,0 +1,582 @@
+:root {
+    color-scheme: dark;
+    --tm-ink: #f8fafc;
+    --tm-muted: rgba(226, 232, 240, 0.76);
+    --tm-border: rgba(255, 255, 255, 0.2);
+    --tm-indigo: #a5b4fc;
+    --tm-teal: #5eead4;
+    --tm-violet: #c4b5fd;
+    --tm-orange: #fb923c;
+
+    /* Tipografia */
+    --tm-font-body: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --tm-font-display: 'Sora', 'Plus Jakarta Sans', sans-serif;
+
+    /* Color unico para todos los iconos */
+    --tm-icon: #fdba74;
+    --tm-icon-soft: rgba(253, 186, 116, 0.16);
+    --tm-icon-border: rgba(253, 186, 116, 0.38);
+}
+
+html {
+    min-height: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    max-width: 100%;
+    overflow-x: clip;
+    background: #11100f;
+}
+
+body {
+    position: relative;
+    isolation: isolate;
+    font-family: var(--tm-font-body);
+    letter-spacing: -0.006em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    max-width: 100%;
+    color: var(--tm-ink);
+    background:
+        radial-gradient(ellipse at 13% 18%, rgba(13, 148, 136, 0.16), transparent 34%),
+        radial-gradient(ellipse at 83% 18%, rgba(124, 58, 237, 0.17), transparent 35%),
+        linear-gradient(135deg, #11100f 0%, #17171b 42%, #141c22 72%, #17121b 100%);
+    background-attachment: fixed;
+    overflow-x: clip;
+}
+
+body::after {
+    position: fixed;
+    z-index: -2;
+    /* -6px evita el borde claro que deja el desenfoque en los extremos */
+    inset: -6px;
+    background:
+        linear-gradient(115deg, rgba(8, 10, 14, 0.42), rgba(12, 14, 18, 0.24) 48%, rgba(11, 12, 16, 0.38)),
+        url("img/vestrahorn-mountains-stokksnes-iceland.jpg") center / cover no-repeat;
+    content: "";
+    /* La foto del fondo va difuminada */
+    filter: blur(7px);
+    transform: scale(1.03);
+    opacity: 0.95;
+    pointer-events: none;
+}
+
+/* La portada y la vista de busqueda conservan su propio fondo */
+body:not(:has(.sidebar))::after {
+    background-image:
+        linear-gradient(115deg, rgba(8, 10, 14, 0.38), rgba(12, 14, 18, 0.2) 48%, rgba(11, 12, 16, 0.34)),
+        url("img/misurina-sunset.jpg");
+}
+
+body:not(:has(.sidebar))::before {
+    display: none;
+}
+
+body:has(nav.glass)::after {
+    background-image:
+        linear-gradient(115deg, rgba(8, 10, 14, 0.38), rgba(12, 14, 18, 0.2) 48%, rgba(11, 12, 16, 0.34)),
+        url("img/misurina-sunset.jpg");
+}
+
+body::before {
+    position: fixed;
+    z-index: -1;
+    inset: 0;
+    background: url("img/TUTORMATCH1.png") center 48% / min(68vw, 760px) auto no-repeat;
+    content: "";
+    filter: brightness(0) invert(1);
+    mix-blend-mode: screen;
+    opacity: 0.045;
+    pointer-events: none;
+}
+
+body > :not(.bubble) {
+    position: relative;
+    z-index: 0;
+}
+
+/* =========================================================
+   TIPOGRAFIA
+========================================================== */
+h1, h2, h3, h4, h5, h6,
+.font-display {
+    font-family: var(--tm-font-display);
+    letter-spacing: -0.022em;
+}
+
+h1 {
+    line-height: 1.12;
+}
+
+h2 {
+    line-height: 1.2;
+}
+
+small,
+.text-xs {
+    letter-spacing: 0.005em;
+}
+
+/* =========================================================
+   ICONOS (un unico color en toda la app)
+========================================================== */
+.tm-icon {
+    display: inline-block;
+    flex: 0 0 auto;
+    vertical-align: -0.16em;
+    color: var(--tm-icon);
+    stroke: currentColor;
+}
+
+.tm-icon.icon-filled {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+/* Iconos de calificacion rellenos cuando el selector los activa */
+button[class*="text-orange-300"] > .tm-icon {
+    fill: currentColor;
+}
+
+/* Contenedor opcional para iconos con fondo suave */
+.icon-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.875rem;
+    color: var(--tm-icon);
+    background: var(--tm-icon-soft);
+    border: 1px solid var(--tm-icon-border);
+}
+
+.icon-chip > .tm-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* Iconos dentro de botones/enlaces se alinean con el texto */
+a > .tm-icon,
+button > .tm-icon {
+    vertical-align: -0.2em;
+}
+
+/* En botones rellenos el icono toma el color del texto para contraste */
+.btn-primary .tm-icon,
+.btn-white .tm-icon,
+.btn-glass .tm-icon,
+.btn-yellow .tm-icon,
+button[class*="bg-green-"] .tm-icon,
+button[class*="bg-red-"] .tm-icon,
+a[class*="bg-green-"] .tm-icon,
+a[class*="bg-red-"] .tm-icon {
+    color: currentColor;
+}
+
+/* Sobre superficies oscuras el icono usa el tono claro de acento */
+.glass-dark .tm-icon,
+.sidebar .tm-icon {
+    color: var(--tm-icon);
+}
+
+.glass,
+.glass-card,
+.glass-dark {
+    position: relative;
+    color: var(--tm-ink);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow:
+        0 16px 44px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(5px) saturate(140%);
+    backdrop-filter: blur(5px) saturate(140%);
+}
+
+.glass {
+    background:
+        linear-gradient(140deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.03) 46%),
+        rgba(20, 21, 24, 0.08);
+}
+
+.glass-card {
+    background:
+        linear-gradient(140deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.03) 48%),
+        rgba(24, 25, 29, 0.1);
+}
+
+.glass-dark {
+    background: rgba(14, 15, 18, 0.2);
+    -webkit-backdrop-filter: blur(5px) saturate(140%);
+    backdrop-filter: blur(5px) saturate(140%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.glass-card {
+    transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+}
+
+.glass-card:hover {
+    border-color: rgba(253, 186, 116, 0.45);
+    background:
+        linear-gradient(140deg, rgba(255, 255, 255, 0.19), rgba(255, 255, 255, 0.045) 48%),
+        rgba(24, 25, 29, 0.08);
+    box-shadow:
+        0 20px 52px rgba(0, 0, 0, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.bubble {
+    max-width: min(55vw, 24rem);
+    max-height: min(55vw, 24rem);
+    background:
+        radial-gradient(circle at 34% 34%, rgba(255, 255, 255, 0.13), transparent 60%),
+        linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(251, 146, 60, 0.12));
+    filter: blur(1px);
+    opacity: 0.62;
+}
+
+.sidebar-item-active {
+    background: linear-gradient(100deg, rgba(251, 146, 60, 0.2), rgba(251, 146, 60, 0.055));
+    border-left-color: var(--tm-orange);
+}
+
+.input-glass {
+    color: var(--tm-ink);
+    background: rgba(10, 12, 15, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.75rem;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+
+.input-glass::placeholder {
+    color: rgba(226, 232, 240, 0.62);
+}
+
+.input-glass:focus {
+    color: #fff;
+    background: rgba(10, 12, 15, 0.7);
+    border-color: var(--tm-orange);
+    box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.18);
+}
+
+.input-glass option {
+    color: #1f2937;
+    background: #fff;
+}
+
+.glass :is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]):not(a):not(button):not(option):not([class*="bg-white"]),
+.glass-card :is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]):not(a):not(button):not(option):not([class*="bg-white"]),
+main :is(div, section, article)[class~="bg-white"] :is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]):not(a):not(button):not(option):not([class*="bg-white"]) {
+    color: rgba(248, 250, 252, 0.94);
+}
+
+.glass a:is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]):not([class*="bg-white"]),
+.glass-card a:is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]):not([class*="bg-white"]) {
+    color: rgba(248, 250, 252, 0.96);
+}
+
+main :is(div, section, article)[class~="bg-white"] {
+    color: var(--tm-ink);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background:
+        linear-gradient(140deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.03) 50%),
+        rgba(22, 23, 27, 0.09);
+    box-shadow:
+        0 14px 40px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(5px) saturate(140%);
+    backdrop-filter: blur(5px) saturate(140%);
+}
+
+main :is(div, section, article)[class~="bg-gray-50"],
+main :is(div, section, article)[class~="bg-yellow-50"],
+main :is(div, section, article)[class~="bg-green-50"],
+main :is(div, section, article)[class~="bg-red-50"],
+main :is(div, section, article)[class~="bg-blue-50"],
+main :is(div, section, article)[class~="bg-purple-50"],
+main :is(div, section, article)[class~="bg-indigo-50"],
+main :is(div, section, article)[class~="bg-amber-50"] {
+    color: var(--tm-ink);
+    border-color: rgba(255, 255, 255, 0.18);
+    background:
+        linear-gradient(140deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03) 54%),
+        rgba(20, 22, 26, 0.1);
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+    -webkit-backdrop-filter: blur(5px) saturate(140%);
+    backdrop-filter: blur(5px) saturate(140%);
+}
+
+main :is(div, section, article):is([class~="bg-gray-50"], [class~="bg-yellow-50"], [class~="bg-green-50"], [class~="bg-red-50"], [class~="bg-blue-50"], [class~="bg-purple-50"], [class~="bg-indigo-50"], [class~="bg-amber-50"]) :is([class*="text-gray-"], [class*="text-slate-"], [class~="text-black"]) {
+    color: rgba(248, 250, 252, 0.9);
+}
+
+main :is(div, section, article)[class~="bg-green-100"],
+main :is(div, section, article)[class~="bg-emerald-100"] {
+    color: #d1fae5;
+    background-color: rgba(16, 185, 129, 0.2);
+    border-color: rgba(110, 231, 183, 0.38);
+}
+
+main :is(div, section, article)[class~="bg-red-100"] {
+    color: #fee2e2;
+    background-color: rgba(239, 68, 68, 0.2);
+    border-color: rgba(252, 165, 165, 0.38);
+}
+
+main :is(div, section, article)[class~="bg-yellow-100"],
+main :is(div, section, article)[class~="bg-amber-100"] {
+    color: #fef3c7;
+    background-color: rgba(245, 158, 11, 0.2);
+    border-color: rgba(252, 211, 77, 0.38);
+}
+
+main :is(div, section, article)[class~="bg-blue-100"],
+main :is(div, section, article)[class~="bg-indigo-100"] {
+    color: #dbeafe;
+    background-color: rgba(59, 130, 246, 0.2);
+    border-color: rgba(147, 197, 253, 0.38);
+}
+
+main :is(div, section, article)[class~="bg-gray-100"],
+main :is(div, section, article)[class~="bg-slate-100"] {
+    color: #f1f5f9;
+    background-color: rgba(148, 163, 184, 0.19);
+    border-color: rgba(203, 213, 225, 0.3);
+}
+
+main span[class~="bg-green-100"],
+main span[class~="bg-emerald-100"] {
+    color: #a7f3d0;
+    background-color: rgba(16, 185, 129, 0.2);
+}
+
+main span[class~="bg-red-100"] {
+    color: #fecaca;
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+main span[class~="bg-yellow-100"],
+main span[class~="bg-amber-100"] {
+    color: #fde68a;
+    background-color: rgba(245, 158, 11, 0.2);
+}
+
+main span[class~="bg-blue-100"],
+main span[class~="bg-indigo-100"] {
+    color: #bfdbfe;
+    background-color: rgba(59, 130, 246, 0.2);
+}
+
+main span[class~="bg-gray-100"],
+main span[class~="bg-slate-100"] {
+    color: #e2e8f0;
+    background-color: rgba(148, 163, 184, 0.19);
+}
+
+main :is(div, section, article)[class~="bg-green-100"] :is([class*="text-green-"], [class*="text-emerald-"]),
+main :is(div, section, article)[class~="bg-emerald-100"] :is([class*="text-green-"], [class*="text-emerald-"]) {
+    color: #a7f3d0;
+}
+
+main :is(div, section, article)[class~="bg-red-100"] [class*="text-red-"] {
+    color: #fecaca;
+}
+
+main :is(div, section, article):is([class~="bg-yellow-100"], [class~="bg-amber-100"]) :is([class*="text-yellow-"], [class*="text-amber-"]) {
+    color: #fde68a;
+}
+
+main :is(div, section, article):is([class~="bg-blue-100"], [class~="bg-indigo-100"]) :is([class*="text-blue-"], [class*="text-indigo-"]) {
+    color: #bfdbfe;
+}
+
+main :is(div, section, article):is([class~="bg-gray-100"], [class~="bg-slate-100"]) :is([class*="text-gray-"], [class*="text-slate-"]) {
+    color: #e2e8f0;
+}
+
+:where(button, a, input, select, textarea):focus-visible {
+    outline: 3px solid rgba(251, 146, 60, 0.95);
+    outline-offset: 3px;
+}
+
+main button[type="submit"],
+.btn-primary,
+.btn-glass,
+.btn-white,
+.btn-yellow {
+    min-height: 44px;
+    font-weight: 700;
+    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+
+main button[type="submit"]:not(:disabled):hover,
+.btn-primary:hover,
+.btn-glass:hover,
+.btn-white:hover,
+.btn-yellow:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.04);
+}
+
+.btn-primary {
+    color: #fff;
+    border-radius: 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: linear-gradient(120deg, rgba(234, 88, 12, 0.82), rgba(249, 115, 22, 0.76) 58%, rgba(217, 72, 15, 0.82));
+    box-shadow: 0 8px 20px rgba(234, 88, 12, 0.2);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    backdrop-filter: blur(10px) saturate(140%);
+}
+
+.btn-glass,
+.btn-white {
+    color: #24140c;
+    border-radius: 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    background: linear-gradient(135deg, rgba(255, 247, 237, 0.84), rgba(254, 215, 170, 0.76));
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    backdrop-filter: blur(10px) saturate(140%);
+}
+
+.btn-yellow {
+    color: #25130a;
+    border-radius: 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: linear-gradient(135deg, rgba(253, 186, 116, 0.82), rgba(249, 115, 22, 0.78));
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.16);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    backdrop-filter: blur(10px) saturate(140%);
+}
+
+/* Al pasar el cursor el boton se vuelve un poco mas solido */
+.btn-white:hover,
+.btn-glass:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 237, 213, 0.9));
+}
+
+.btn-yellow:hover {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.9), rgba(234, 88, 12, 0.88));
+}
+
+.btn-primary:hover {
+    background: linear-gradient(120deg, rgba(234, 88, 12, 0.94), rgba(249, 115, 22, 0.9) 58%, rgba(217, 72, 15, 0.94));
+}
+
+.rol-card {
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.03) 54%, rgba(251, 146, 60, 0.08)),
+        rgba(24, 25, 28, 0.26);
+    border-color: rgba(255, 255, 255, 0.26);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+}
+
+.rol-card:hover,
+.rol-card.selected {
+    background:
+        linear-gradient(135deg, rgba(251, 146, 60, 0.25), rgba(255, 255, 255, 0.07)),
+        rgba(35, 29, 25, 0.57);
+    border-color: rgba(253, 186, 116, 0.7);
+}
+
+main {
+    min-width: 0;
+}
+
+main img {
+    max-width: 100%;
+}
+
+main table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+main th {
+    color: #ffedd5;
+    font-weight: 700;
+}
+
+main td,
+main th {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+main :is(input, select, textarea) {
+    max-width: 100%;
+}
+
+main :is(h1, h2, h3) {
+    text-wrap: balance;
+}
+
+/* Espaciado minimo entre elementos de linea con iconos */
+main :is(h1, h2, h3, h4) > .tm-icon {
+    margin-right: 0.45rem;
+}
+
+main a:not(.btn-white):not(.btn-yellow):not(.btn-glass):not(.btn-primary) {
+    text-decoration-color: rgba(251, 146, 60, 0.55);
+    text-underline-offset: 0.2em;
+}
+
+@media (max-width: 640px) {
+    body {
+        background-attachment: scroll;
+    }
+
+    body::before {
+        background-size: min(92vw, 520px) auto;
+        background-position: center 40%;
+        opacity: 0.035;
+    }
+
+    body::after {
+        background-position: 58% center;
+        opacity: 0.85;
+    }
+
+    main {
+        padding: 0.875rem;
+    }
+
+    main table {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    /* En pantallas pequenas se reduce el desenfoque para que el fondo se note mas */
+    .glass,
+    .glass-card,
+    .glass-dark {
+        -webkit-backdrop-filter: blur(4px) saturate(140%);
+        backdrop-filter: blur(4px) saturate(140%);
+    }
+
+    /* El fondo ya viene difuminado; en movil se reduce para que rinda mejor */
+    body::after {
+        filter: blur(5px);
+    }
+
+    .bubble {
+        max-width: 46vw;
+        max-height: 46vw;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

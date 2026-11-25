@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Resena extends Model
 {
@@ -13,17 +14,17 @@ class Resena extends Model
         'calificacion', 'comentario', 'respuesta_tutor', 'estado',
     ];
 
-    public function clase()
+    public function clase(): BelongsTo
     {
         return $this->belongsTo(Clase::class);
     }
 
-    public function estudiante()
+    public function estudiante(): BelongsTo
     {
         return $this->belongsTo(User::class, 'estudiante_id');
     }
 
-    public function tutor()
+    public function tutor(): BelongsTo
     {
         return $this->belongsTo(Tutor::class);
     }

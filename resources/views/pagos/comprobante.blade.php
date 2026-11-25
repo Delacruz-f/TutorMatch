@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
-    <title>Comprobante de Pago</title>
+    <title>{{ __('ui.payment_receipt') }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12px; color: #333; padding: 30px; }
@@ -99,9 +99,9 @@
     <!-- Encabezado -->
     <div class="header">
         <h1>TutorMatch</h1>
-        <p>Comprobante de Pago Electrónico</p>
+        <p>{{ __('ui.electronic_payment_receipt') }}</p>
         <p style="margin-top: 8px;">
-            <span class="badge">✓ PAGO CONFIRMADO</span>
+            <span class="badge">{{ __('ui.payment_confirmed') }}</span>
         </p>
     </div>
 
@@ -110,11 +110,11 @@
         <table style="width: 100%;">
             <tr>
                 <td style="width: 50%;">
-                    <strong>N° Comprobante:</strong><br>
+                    <strong>{{ __('ui.receipt_number') }}</strong><br>
                     TM-{{ str_pad($pago->id, 6, '0', STR_PAD_LEFT) }}-{{ date('Y', strtotime($pago->pagado_en ?? $pago->created_at)) }}
                 </td>
                 <td style="width: 50%; text-align: right;">
-                    <strong>Fecha de emisión:</strong><br>
+                    <strong>{{ __('ui.issue_date') }}</strong><br>
                     {{ \Carbon\Carbon::parse($pago->pagado_en ?? $pago->created_at)->format('d/m/Y H:i') }}
                 </td>
             </tr>
@@ -122,73 +122,73 @@
     </div>
 
     <!-- Datos del estudiante -->
-    <h2>Datos del Estudiante</h2>
+    <h2>{{ __('ui.student_details') }}</h2>
     <table class="info">
         <tr>
-            <td>Nombre completo</td>
+            <td>{{ __('ui.full_name') }}</td>
             <td>{{ $clase->estudiante->nombre }} {{ $clase->estudiante->apellido }}</td>
         </tr>
         <tr>
-            <td>Correo electrónico</td>
+            <td>{{ __('ui.email') }}</td>
             <td>{{ $clase->estudiante->email }}</td>
         </tr>
     </table>
 
     <!-- Datos del tutor -->
-    <h2>Datos del Tutor</h2>
+    <h2>{{ __('ui.tutor_details') }}</h2>
     <table class="info">
         <tr>
-            <td>Nombre completo</td>
+            <td>{{ __('ui.full_name') }}</td>
             <td>{{ $clase->tutor->user->nombre }} {{ $clase->tutor->user->apellido }}</td>
         </tr>
         <tr>
-            <td>Universidad / Carrera</td>
+            <td>{{ __('ui.university_degree') }}</td>
             <td>{{ $clase->tutor->universidad }} — {{ $clase->tutor->carrera }}</td>
         </tr>
     </table>
 
     <!-- Detalles de la clase -->
-    <h2>Detalles de la Clase</h2>
+    <h2>{{ __('ui.class_details') }}</h2>
     <table class="info">
         <tr>
-            <td>Materia</td>
+            <td>{{ __('ui.subject') }}</td>
             <td>{{ $clase->materia->nombre }}</td>
         </tr>
         <tr>
-            <td>Fecha</td>
+            <td>{{ __('ui.date') }}</td>
             <td>{{ $clase->fecha->format('d/m/Y') }}</td>
         </tr>
         <tr>
-            <td>Horario</td>
+            <td>{{ __('ui.schedule') }}</td>
             <td>{{ substr($clase->hora_inicio, 0, 5) }} - {{ substr($clase->hora_fin, 0, 5) }}</td>
         </tr>
         <tr>
-            <td>Duración</td>
-            <td>{{ $clase->duracion_min }} minutos</td>
+            <td>{{ __('ui.duration') }}</td>
+            <td>{{ $clase->duracion_min }} {{ __('ui.minutes') }}</td>
         </tr>
         <tr>
-            <td>Estado de la clase</td>
-            <td style="text-transform: capitalize;">{{ str_replace('_', ' ', $clase->estado) }}</td>
+            <td>{{ __('ui.class_status_label') }}</td>
+            <td>{{ __('ui.status_labels.' . $clase->estado) }}</td>
         </tr>
     </table>
 
     <!-- Desglose del pago -->
-    <h2>Desglose del Pago</h2>
+    <h2>{{ __('ui.payment_breakdown') }}</h2>
     <table class="desglose">
         <thead>
             <tr>
-                <th>Concepto</th>
-                <th class="text-right">Monto</th>
+                <th>{{ __('ui.concept') }}</th>
+                <th class="text-right">{{ __('ui.amount') }}</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>Clase de {{ $clase->materia->nombre }} ({{ $clase->duracion_min }} min)</td>
+                <td>{{ __('ui.class_of') }} {{ $clase->materia->nombre }} ({{ $clase->duracion_min }} min)</td>
                 <td class="text-right">S/ {{ number_format($clase->precio_total, 2) }}</td>
             </tr>
             <tr>
                 <td style="font-size: 10px; color: #6b7280;">
-                    Incluye comisión de plataforma ({{ $clase->comision_porcentaje }}%)
+                    {{ __('ui.includes_platform_commission') }} ({{ $clase->comision_porcentaje }}%)
                 </td>
                 <td class="text-right" style="font-size: 10px; color: #6b7280;">
                     S/ {{ number_format($clase->comision_monto, 2) }}
@@ -199,32 +199,32 @@
 
     <!-- Total -->
     <div class="total-box">
-        <div class="label">TOTAL PAGADO</div>
+        <div class="label">{{ __('ui.total_paid') }}</div>
         <div class="monto">S/ {{ number_format($clase->precio_total, 2) }}</div>
     </div>
 
     <!-- Datos del pago -->
-    <h2>Detalles del Pago</h2>
+    <h2>{{ __('ui.payment_details') }}</h2>
     <table class="info">
         <tr>
-            <td>Método de pago</td>
+            <td>{{ __('ui.payment_method_label') }}</td>
             <td style="text-transform: uppercase;">{{ $pago->metodo }}</td>
         </tr>
         <tr>
-            <td>N° de operación / Referencia</td>
+            <td>{{ __('ui.operation_reference') }}</td>
             <td>{{ $pago->referencia }}</td>
         </tr>
         <tr>
-            <td>Fecha de validación</td>
+            <td>{{ __('ui.validation_date') }}</td>
             <td>{{ \Carbon\Carbon::parse($pago->pagado_en)->format('d/m/Y H:i') }}</td>
         </tr>
     </table>
 
     <!-- Footer -->
     <div class="footer">
-        <p><strong>TutorMatch</strong> — Plataforma de tutorías académicas</p>
-        <p>Este comprobante es válido sin firma autógrafa.</p>
-        <p>Generado el {{ now()->format('d/m/Y H:i') }}</p>
+        <p><strong>TutorMatch</strong> — {{ __('ui.tutoring_platform') }}</p>
+        <p>{{ __('ui.receipt_valid_without_signature') }}</p>
+        <p>{{ __('ui.generated_on') }} {{ now()->format('d/m/Y H:i') }}</p>
     </div>
 
 </body>

@@ -9,7 +9,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Recordatorio 30 min antes (email + BD)
-Schedule::command('clases:recordatorios-30min')->everyMinute();
+Schedule::command('clases:recordatorios-30min')->everyMinute()->withoutOverlapping();
 
 // Notificación "sala lista" 5 min antes
-Schedule::command('clases:notificar-salas')->everyMinute();
+Schedule::command('clases:notificar-salas')->everyMinute()->withoutOverlapping();

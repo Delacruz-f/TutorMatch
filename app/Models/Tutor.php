@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Tutor extends Model
 {
@@ -21,29 +25,30 @@ class Tutor extends Model
     ];
 
     // Relaciones
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function materias()
+    public function materias(): BelongsToMany
     {
         return $this->belongsToMany(Materia::class, 'materia_tutor', 'tutor_id', 'materia_id');
     }
-    public function clases()
-{
-    return $this->hasMany(Clase::class);
-}
 
-public function retiros()
-{
-    return $this->hasMany(Retiro::class);
-}
+    public function clases(): HasMany
+    {
+        return $this->hasMany(Clase::class);
+    }
 
-public function resenas()
-{
-    return $this->hasMany(Resena::class);
-}
+    public function retiros(): HasMany
+    {
+        return $this->hasMany(Retiro::class);
+    }
+
+    public function resenas(): HasMany
+    {
+        return $this->hasMany(Resena::class);
+    }
 
 /**
  * Calcula el saldo disponible del tutor:
@@ -64,18 +69,19 @@ public function saldoDisponible()
     return round($ganado - $retirado, 2);
 }
 
-    public function disponibilidades()
+    public function disponibilidades(): HasMany
     {
         return $this->hasMany(Disponibilidad::class);
     }
-    public function suscripciones()
-{
-    return $this->hasMany(Suscripcion::class);
-}
 
-public function suscripcionActiva()
-{
-    return $this->hasOne(Suscripcion::class)
+    public function suscripciones(): HasMany
+    {
+        return $this->hasMany(Suscripcion::class);
+    }
+
+    public function suscripcionActiva(): HasOne
+    {
+        return $this->hasOne(Suscripcion::class)
         ->where('estado', 'activa')
         ->where('fecha_fin', '>=', now()->toDateString())
         ->latest();

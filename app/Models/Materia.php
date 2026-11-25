@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Materia extends Model
 {
@@ -12,8 +14,17 @@ class Materia extends Model
         'nombre', 'slug', 'descripcion', 'icono', 'activo'
     ];
 
-    public function tutores()
+    protected $casts = [
+        'activo' => 'boolean',
+    ];
+
+    public function tutores(): BelongsToMany
     {
         return $this->belongsToMany(Tutor::class, 'materia_tutor', 'materia_id', 'tutor_id');
+    }
+
+    public function clases(): HasMany
+    {
+        return $this->hasMany(Clase::class);
     }
 }

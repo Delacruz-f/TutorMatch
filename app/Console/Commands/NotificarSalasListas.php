@@ -17,10 +17,11 @@ class NotificarSalasListas extends Command
         $ahora = Carbon::now();
         $limite = $ahora->copy()->addMinutes(5);
 
-        // Clases aceptadas que empiezan entre ahora y 5 min, sin notificación enviada
+        // Clases aceptadas que empiezan entre ahora y 5 min.
+        // No se usan flags de "enviado": el helper Notificacion::enviar()
+        // evita duplicados si ya existe una notificación igual sin leer.
         $clases = Clase::with(['estudiante', 'tutor.user', 'materia'])
             ->where('estado', 'aceptada')
-            ->where('recordatorio_enviado', 0)
             ->whereDate('fecha', $ahora->toDateString())
             ->get()
             ->filter(function ($clase) use ($ahora, $limite) {
@@ -28,27 +29,34 @@ class NotificarSalasListas extends Command
                 return $inicio->between($ahora, $limite);
             });
 
+        $enviadas = 0;
+
         foreach ($clases as $clase) {
             // Notificar al estudiante
-            Notificacion::enviar(
+            $a = Notificacion::enviar(
                 $clase->estudiante_id,
                 '🎥 Sala lista para tu clase',
                 "Tu clase de {$clase->materia->nombre} comienza en 5 minutos. ¡Entra a la sala!",
-                route('clases.sala', $clase->id)
+                route('clases.sala', $clase->id),
+                'clase'
             );
 
             // Notificar al tutor
-            Notificacion::enviar(
+            $b = Notificacion::enviar(
                 $clase->tutor->user_id,
                 '🎥 Sala lista para tu clase',
                 "Tu clase de {$clase->materia->nombre} con {$clase->estudiante->nombre} comienza en 5 minutos.",
-                route('clases.sala', $clase->id)
+                route('clases.sala', $clase->id),
+                'clase'
             );
 
-            $clase->update(['recordatorio_enviado' => 1]);
-            $this->info("Notificación enviada para clase #{$clase->id}");
+            $enviadas += ($a ? 1 : 0) + ($b ? 1 : 0);
+
+            if ($a || $b) {
+                $this->info("Notificación enviada para clase #{$clase->id}");
+            }
         }
 
-        $this->info("Total: " . $clases->count() . " notificaciones enviadas.");
+        $this->info("Total: {$enviadas} notificaciones enviadas.");
     }
 }

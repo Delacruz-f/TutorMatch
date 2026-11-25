@@ -1,34 +1,87 @@
 @extends('layouts.app')
 
-@section('title', 'Gestión de Suscripciones')
+@section('title', __('ui.manage_subscriptions'))
 
 @section('content')
 <div class="glass rounded-2xl p-6 text-white mb-6">
-    <h1 class="text-3xl font-bold mb-1">⭐ Suscripciones</h1>
-    <p class="text-white/80">Tutores con plan destacado o premium</p>
+    <h1 class="text-3xl font-bold mb-1 flex items-center"><x-icon name="sparkles" class="w-7 h-7" /> {{ __('ui.subscriptions') }}</h1>
+    <p class="text-white/80">{{ __('ui.plans_for_tutors') }}</p>
 </div>
+
+@if(session('success') || session('error'))
+    <div class="rounded-xl p-4 mb-6 {{ session('error') ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}" role="alert">
+        {{ session('success') ?? session('error') }}
+    </div>
+@endif
 
 <!-- Stats -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
     <div class="glass rounded-2xl p-5 text-white">
-        <p class="text-xs text-white/70 uppercase">Suscripciones Activas</p>
+        <p class="text-xs text-white/70 uppercase">{{ __('ui.active_subscriptions') }}</p>
         <p class="text-3xl font-bold">{{ $activas }}</p>
     </div>
     <div class="glass rounded-2xl p-5 text-white">
-        <p class="text-xs text-white/70 uppercase">Ingresos del Mes</p>
+        <p class="text-xs text-white/70 uppercase">{{ __('ui.monthly_income') }}</p>
         <p class="text-3xl font-bold">S/ {{ number_format($ingresosMes, 2) }}</p>
     </div>
     <div class="glass rounded-2xl p-5 text-white">
-        <p class="text-xs text-white/70 uppercase">Tutores Destacados</p>
+        <p class="text-xs text-white/70 uppercase">{{ __('ui.featured_tutors') }}</p>
         <p class="text-3xl font-bold">{{ $tutoresDestacados->count() }}</p>
     </div>
 </div>
 
+<!-- Solicitudes pendientes -->
+<div class="glass rounded-2xl p-6 text-white mb-6">
+    <h2 class="text-xl font-bold mb-4">{{ __('ui.pending_payments') }} ({{ $solicitudesPendientes->count() }})</h2>
+    @if($solicitudesPendientes->isEmpty())
+        <p class="text-white/60 text-sm">{{ __('ui.no_payments_pending') }}</p>
+    @else
+        <div class="space-y-3">
+            @foreach($solicitudesPendientes as $solicitud)
+                @php
+                    preg_match('/PLAN:(destacado|premium)/i', (string) $solicitud->referencia, $planMatch);
+                @endphp
+                <div class="bg-white/10 rounded-xl p-4 border border-white/15 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="min-w-0 flex-1">
+                        <p class="font-bold">{{ $solicitud->user->nombre }} {{ $solicitud->user->apellido }}</p>
+                        <p class="text-sm text-white/75 break-words">
+                            {{ __('ui.plan') }}:
+                            {{ isset($planMatch[1]) ? __('ui.plan_labels.' . strtolower($planMatch[1])) : __('ui.unknown') }}
+                            · S/ {{ $solicitud->monto }}
+                        </p>
+                        <p class="text-xs text-white/60 break-words">{{ __('ui.reference_short') }} {{ $solicitud->referencia }}</p>
+                    </div>
+                    <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
+                        <a href="{{ route('admin.pagos.comprobante', $solicitud->id) }}" target="_blank"
+                           class="w-full rounded bg-blue-500 px-3 py-2 text-center text-sm text-white hover:bg-blue-600 sm:w-auto">
+                            {{ __('ui.view_receipt') }}
+                        </a>
+                        <form method="POST" action="{{ route('admin.pagos.aprobar', $solicitud->id) }}">
+                            @csrf
+                            <button type="submit" class="w-full rounded bg-green-600 px-3 py-2 text-sm text-white hover:bg-green-700 sm:w-auto">
+                                {{ __('ui.approve') }}
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ route('admin.pagos.rechazar', $solicitud->id) }}" class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                            @csrf
+                            <input type="text" name="motivo" placeholder="{{ __('ui.reject_reason') }}" required
+                                   class="w-full min-w-0 rounded px-3 py-2 text-sm text-gray-900 sm:w-40">
+                            <button type="submit" class="w-full rounded bg-red-600 px-3 py-2 text-sm text-white hover:bg-red-700 sm:w-auto">
+                                {{ __('ui.reject') }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+</div>
+
 <!-- Tutores activos con plan -->
 <div class="glass rounded-2xl p-6 text-white mb-6">
-    <h2 class="text-xl font-bold mb-4">🏆 Tutores Destacados Activos</h2>
+    <h2 class="text-xl font-bold mb-4 flex items-center"><x-icon name="trophy" class="w-5 h-5" /> {{ __('ui.active_featured_tutors') }}</h2>
     @if($tutoresDestacados->isEmpty())
-        <p class="text-white/60 text-sm">No hay tutores con plan activo actualmente.</p>
+        <p class="text-white/60 text-sm">{{ __('ui.no_active_plan_tutors') }}</p>
     @else
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             @foreach($tutoresDestacados as $t)
@@ -45,7 +98,7 @@
                             <p class="font-bold text-sm">{{ $t->user->nombre }} {{ $t->user->apellido }}</p>
                             <p class="text-xs text-white/70">
                                 <span class="{{ $t->plan === 'premium' ? 'text-yellow-300' : 'text-blue-300' }}">
-                                    {{ $t->plan === 'premium' ? '👑 Premium' : '⭐ Destacado' }}
+                                    <x-icon :name="$t->plan === 'premium' ? 'crown' : 'star'" class="w-3.5 h-3.5" /> {{ $t->plan === 'premium' ? 'Premium' : 'Destacado' }}
                                 </span>
                                 · Vence {{ $t->plan_vence->format('d/m/Y') }}
                             </p>
@@ -61,44 +114,44 @@
 <div class="glass rounded-2xl p-4 text-white mb-6">
     <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-3">
         <select name="estado" class="px-4 py-2 rounded-xl bg-white/15 border border-white/30 text-white">
-            <option value="" class="text-gray-800">Todos los estados</option>
-            <option value="activa" {{ request('estado') == 'activa' ? 'selected' : '' }} class="text-gray-800">Activa</option>
-            <option value="vencida" {{ request('estado') == 'vencida' ? 'selected' : '' }} class="text-gray-800">Vencida</option>
-            <option value="cancelada" {{ request('estado') == 'cancelada' ? 'selected' : '' }} class="text-gray-800">Cancelada</option>
+            <option value="" class="text-gray-800">{{ __('ui.all_states') }}</option>
+            <option value="activa" {{ request('estado') == 'activa' ? 'selected' : '' }} class="text-gray-800">{{ __('ui.active_plan') }}</option>
+            <option value="vencida" {{ request('estado') == 'vencida' ? 'selected' : '' }} class="text-gray-800">{{ __('ui.expired_plan') }}</option>
+            <option value="cancelada" {{ request('estado') == 'cancelada' ? 'selected' : '' }} class="text-gray-800">{{ __('ui.cancelled') }}</option>
         </select>
         <select name="plan" class="px-4 py-2 rounded-xl bg-white/15 border border-white/30 text-white">
-            <option value="" class="text-gray-800">Todos los planes</option>
-            <option value="destacado" {{ request('plan') == 'destacado' ? 'selected' : '' }} class="text-gray-800">Destacado</option>
-            <option value="premium" {{ request('plan') == 'premium' ? 'selected' : '' }} class="text-gray-800">Premium</option>
+            <option value="" class="text-gray-800">{{ __('ui.all_plans') }}</option>
+            <option value="destacado" {{ request('plan') == 'destacado' ? 'selected' : '' }} class="text-gray-800">{{ __('ui.plan_labels.destacado') }}</option>
+            <option value="premium" {{ request('plan') == 'premium' ? 'selected' : '' }} class="text-gray-800">{{ __('ui.plan_labels.premium') }}</option>
         </select>
         <div></div>
-        <button type="submit" class="bg-white text-brand-600 py-2 rounded-xl font-bold hover:bg-white/90">Filtrar</button>
+        <button type="submit" class="bg-white text-brand-600 py-2 rounded-xl font-bold hover:bg-white/90">{{ __('ui.filter') }}</button>
     </form>
 </div>
 
 <!-- Tabla -->
 <div class="glass rounded-2xl p-6 text-white">
     @if($suscripciones->isEmpty())
-        <p class="text-center py-8 text-white/70">No hay suscripciones registradas.</p>
+        <p class="text-center py-8 text-white/70">{{ __('ui.no_subscriptions_registered') }}</p>
     @else
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-white/20">
-                        <th class="text-left p-3 font-semibold text-white/80">Tutor</th>
-                        <th class="text-left p-3 font-semibold text-white/80">Plan</th>
-                        <th class="text-left p-3 font-semibold text-white/80">Monto</th>
-                        <th class="text-left p-3 font-semibold text-white/80">Inicio</th>
-                        <th class="text-left p-3 font-semibold text-white/80">Fin</th>
-                        <th class="text-left p-3 font-semibold text-white/80">Estado</th>
-                        <th class="text-left p-3 font-semibold text-white/80">Acciones</th>
+                        <th class="text-left p-3 font-semibold text-white/80">{{ __('ui.tutor') }}</th>
+                        <th class="text-left p-3 font-semibold text-white/80">{{ __('ui.plan') }}</th>
+                        <th class="text-left p-3 font-semibold text-white/80">{{ __('ui.amount') }}</th>
+                        <th class="text-left p-3 font-semibold text-white/80">{{ __('ui.home') }}</th>
+                        <th class="text-left p-3 font-semibold text-white/80">{{ __('ui.end_date') }}</th>
+                        <th class="text-left p-3 font-semibold text-white/80">{{ __('ui.status') }}</th>
+                        <th class="text-left p-3 font-semibold text-white/80">{{ __('ui.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($suscripciones as $s)
                         <tr class="border-b border-white/10 hover:bg-white/5">
                             <td class="p-3">{{ $s->tutor->user->nombre }} {{ $s->tutor->user->apellido }}</td>
-                            <td class="p-3 capitalize">{{ $s->plan }}</td>
+                            <td class="p-3 capitalize">{{ __('ui.plan_labels.' . $s->plan) }}</td>
                             <td class="p-3">S/ {{ $s->monto }}</td>
                             <td class="p-3 text-xs">{{ $s->fecha_inicio->format('d/m/Y') }}</td>
                             <td class="p-3 text-xs">{{ $s->fecha_fin->format('d/m/Y') }}</td>
@@ -107,7 +160,7 @@
                                     {{ $s->estado === 'activa' ? 'bg-green-400/30' : '' }}
                                     {{ $s->estado === 'vencida' ? 'bg-yellow-400/30' : '' }}
                                     {{ $s->estado === 'cancelada' ? 'bg-red-400/30' : '' }}">
-                                    {{ ucfirst($s->estado) }}
+                                    {{ __('ui.status_labels.' . $s->estado) }}
                                 </span>
                             </td>
                             <td class="p-3">
@@ -116,11 +169,11 @@
                                         <form method="POST" action="{{ route('admin.suscripciones.extender', $s->id) }}" class="inline flex gap-1">
                                             @csrf
                                             <input type="number" name="meses" value="1" min="1" max="12" class="w-14 px-2 py-1 rounded bg-white/15 border border-white/30 text-white text-xs">
-                                            <button class="bg-blue-500/40 hover:bg-blue-500/60 px-2 py-1 rounded text-xs" title="Extender">➕</button>
+                                            <button class="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/15 p-1.5 rounded-lg" title="{{ __('ui.extend') }}"><x-icon name="plus" class="w-4 h-4" /></button>
                                         </form>
-                                        <form method="POST" action="{{ route('admin.suscripciones.cancelar', $s->id) }}" onsubmit="return confirm('¿Cancelar esta suscripción?')">
+                                        <form method="POST" action="{{ route('admin.suscripciones.cancelar', $s->id) }}" onsubmit="return confirm(@json(__('ui.cancel_subscription_confirm')))">
                                             @csrf
-                                            <button class="bg-red-500/40 hover:bg-red-500/60 px-2 py-1 rounded text-xs">❌</button>
+                                            <button class="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 border border-white/15 p-1.5 rounded-lg" title="{{ __('ui.cancel') }}"><x-icon name="x" class="w-4 h-4" /></button>
                                         </form>
                                     @endif
                                 </div>

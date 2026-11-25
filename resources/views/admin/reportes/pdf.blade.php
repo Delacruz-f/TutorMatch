@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
-    <title>Reporte TutorMatch</title>
+    <title>{{ __('ui.report_title') }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -111,39 +111,39 @@
     <!-- Encabezado -->
     <div class="header">
         <h1>TutorMatch</h1>
-        <p>Reporte de Ingresos y Actividad de la Plataforma</p>
+        <p>{{ __('ui.report_income_activity') }}</p>
     </div>
 
     <!-- Período -->
     <div class="periodo">
-        <strong>Período del reporte:</strong>
+        <strong>{{ __('ui.report_period') }}</strong>
         {{ \Carbon\Carbon::parse($desde)->format('d/m/Y') }}
-        al
+        {{ __('ui.to_date') }}
         {{ \Carbon\Carbon::parse($hasta)->format('d/m/Y') }}
         <br>
         <span style="font-size: 10px; color: #666;">
-            Generado el {{ now()->format('d/m/Y H:i') }}
+            {{ __('ui.generated_on') }} {{ now()->format('d/m/Y H:i') }}
         </span>
     </div>
 
     <!-- Resumen General -->
-    <h2>Resumen General</h2>
+    <h2>{{ __('ui.general_summary') }}</h2>
     <table class="cards">
         <tr>
             <td>
-                <div class="card-label">Ingresos Totales</div>
+                <div class="card-label">{{ __('ui.total_income') }}</div>
                 <div class="card-value green">S/ {{ number_format($totalIngresos, 2) }}</div>
             </td>
             <td>
-                <div class="card-label">Comisiones por Clases</div>
+                <div class="card-label">{{ __('ui.class_commissions') }}</div>
                 <div class="card-value blue">S/ {{ number_format($comisiones, 2) }}</div>
             </td>
             <td>
-                <div class="card-label">Suscripciones</div>
+                <div class="card-label">{{ __('ui.subscription_income') }}</div>
                 <div class="card-value purple">S/ {{ number_format($ingresosSuscripciones, 2) }}</div>
             </td>
             <td>
-                <div class="card-label">Clases Completadas</div>
+                <div class="card-label">{{ __('ui.completed_classes') }}</div>
                 <div class="card-value">{{ $clasesCompletadas }}</div>
             </td>
         </tr>
@@ -152,15 +152,15 @@
     <table class="cards">
         <tr>
             <td>
-                <div class="card-label">Nuevos Usuarios</div>
+                <div class="card-label">{{ __('ui.new_users') }}</div>
                 <div class="card-value blue">{{ $nuevosUsuarios }}</div>
             </td>
             <td>
-                <div class="card-label">Retiros Pagados</div>
+                <div class="card-label">{{ __('ui.paid_withdrawals') }}</div>
                 <div class="card-value red">S/ {{ number_format($retirosPagados, 2) }}</div>
             </td>
             <td colspan="2">
-                <div class="card-label">Ganancia Neta de la Plataforma</div>
+                <div class="card-label">{{ __('ui.net_platform_profit') }}</div>
                 <div class="card-value green">
                     S/ {{ number_format($totalIngresos - $retirosPagados, 2) }}
                 </div>
@@ -169,17 +169,17 @@
     </table>
 
     <!-- Top Tutores -->
-    <h2>Top Tutores del Período</h2>
+    <h2>{{ __('ui.top_tutors_period') }}</h2>
     @if($topTutores->isEmpty())
-        <p class="empty">Sin datos en este período.</p>
+        <p class="empty">{{ __('ui.no_data_period') }}</p>
     @else
         <table class="data">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Tutor</th>
-                    <th>Universidad / Carrera</th>
-                    <th class="text-right">Ingresos Generados</th>
+                    <th>{{ __('ui.tutor') }}</th>
+                    <th>{{ __('ui.university_degree') }}</th>
+                    <th class="text-right">{{ __('ui.generated_income') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -196,20 +196,20 @@
     @endif
 
     <!-- Detalle de Clases -->
-    <h2>Detalle de Clases Completadas ({{ $detalleClases->count() }})</h2>
+    <h2>{{ __('ui.class_details_count', ['count' => $detalleClases->count()]) }}</h2>
     @if($detalleClases->isEmpty())
-        <p class="empty">No hay clases completadas en este período.</p>
+        <p class="empty">{{ __('ui.no_classes_period') }}</p>
     @else
         <table class="data">
             <thead>
                 <tr>
-                    <th>Fecha</th>
-                    <th>Estudiante</th>
-                    <th>Tutor</th>
-                    <th>Materia</th>
-                    <th class="text-right">Total</th>
-                    <th class="text-right">Comisión</th>
-                    <th class="text-right">Tutor</th>
+                    <th>{{ __('ui.date') }}</th>
+                    <th>{{ __('ui.student') }}</th>
+                    <th>{{ __('ui.tutor') }}</th>
+                    <th>{{ __('ui.subject') }}</th>
+                    <th class="text-right">{{ __('ui.total') }}</th>
+                    <th class="text-right">{{ __('ui.commission') }}</th>
+                    <th class="text-right">{{ __('ui.tutor_amount') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -227,7 +227,7 @@
             </tbody>
             <tfoot>
                 <tr style="background: #eff6ff; font-weight: bold;">
-                    <td colspan="4" class="text-right">TOTALES:</td>
+                    <td colspan="4" class="text-right">{{ __('ui.totals') }}</td>
                     <td class="text-right">S/ {{ number_format($detalleClases->sum('precio_total'), 2) }}</td>
                     <td class="text-right text-green">S/ {{ number_format($detalleClases->sum('comision_monto'), 2) }}</td>
                     <td class="text-right">S/ {{ number_format($detalleClases->sum('monto_tutor'), 2) }}</td>
@@ -238,9 +238,9 @@
 
     <!-- Footer -->
     <div class="footer">
-        TutorMatch © {{ date('Y') }} — Reporte generado automáticamente por el sistema.
+        TutorMatch © {{ date('Y') }} — {{ __('ui.automatically_generated_report') }}
         <br>
-        Documento válido sin firma.
+        {{ __('ui.document_valid') }}
     </div>
 
 </body>

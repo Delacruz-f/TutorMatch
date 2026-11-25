@@ -21,9 +21,13 @@ class ClaseTutorController extends Controller
             return redirect()->route('tutor.register.form');
         }
 
+        if (in_array($tutor->aprobacion, ['pendiente', 'rechazado'], true)) {
+            return view('dashboards.tutor');
+        }
+
         $solicitudes = Clase::with(['estudiante', 'materia'])
             ->where('tutor_id', $tutor->id)
-            ->where('estado', 'pendiente')
+            ->pendientes()
             ->orderBy('fecha', 'asc')
             ->orderBy('hora_inicio', 'asc')
             ->get();
@@ -54,7 +58,7 @@ class ClaseTutorController extends Controller
     $tutor = Auth::user()->tutor;
     $clase = Clase::with(['estudiante', 'materia', 'tutor.user'])
         ->where('tutor_id', $tutor->id)
-        ->where('estado', 'pendiente')
+        ->pendientes()
         ->findOrFail($claseId);
 
     $salaJitsi = 'TutorMatch-' . Str::random(10) . '-' . $clase->id;
@@ -93,7 +97,7 @@ class ClaseTutorController extends Controller
     $tutor = Auth::user()->tutor;
     $clase = Clase::with(['estudiante', 'materia', 'tutor.user'])
         ->where('tutor_id', $tutor->id)
-        ->where('estado', 'pendiente')
+        ->pendientes()
         ->findOrFail($claseId);
 
     $clase->update([

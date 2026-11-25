@@ -1,62 +1,21 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TutorMatch - Encuentra tu Tutor Ideal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+@extends('layouts.guest')
+
+@section('title', __('ui.welcome_title'))
+
+@section('bodyClass', 'text-white overflow-x-hidden')
+@section('languageSwitcherInNavbar', true)
+
+@push('styles')
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(-45deg, #667eea, #764ba2, #6366f1, #8b5cf6);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            min-height: 100vh;
-        }
-        @keyframes gradient {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-        }
+        /* Los estilos base de .glass-card / .btn-white / .btn-yellow viven en theme.css */
         .glass-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            transition: all 0.3s ease;
+            transition: transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
         }
         .glass-card:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-5px);
+            transform: translateY(-4px);
         }
-        .btn-white {
-            background: white;
-            color: #4f46e5;
-            transition: all 0.3s ease;
-        }
-        .btn-white:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.4);
-        }
-        .btn-yellow {
-            background: #fbbf24;
-            color: #1f2937;
-            transition: all 0.3s ease;
-        }
-        .btn-yellow:hover {
-            background: #f59e0b;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.4);
-        }
+        /* Burbujas propias de la portada */
         .bubble {
-            position: absolute;
-            border-radius: 50%;
             background: rgba(255, 255, 255, 0.08);
             animation: float 8s ease-in-out infinite;
         }
@@ -65,88 +24,99 @@
             50% { transform: translateY(-30px); }
         }
     </style>
-    <link rel="stylesheet" href="{{ asset('theme.css') }}">
-</head>
-<body class="text-white overflow-x-hidden">
+@endpush
 
-    <div class="bubble w-96 h-96 top-20 left-10"></div>
-    <div class="bubble w-64 h-64 top-1/3 right-10" style="animation-delay: 3s;"></div>
-    <div class="bubble w-48 h-48 bottom-20 left-1/3" style="animation-delay: 5s;"></div>
+@section('content')
+
+    <div class="bubble w-40 h-40 sm:w-96 sm:h-96 top-20 left-2 sm:left-10"></div>
+    <div class="bubble w-32 h-32 sm:w-64 sm:h-64 top-1/3 right-2 sm:right-10" style="animation-delay: 3s;"></div>
+    <div class="bubble w-24 h-24 sm:w-48 sm:h-48 bottom-20 left-1/3" style="animation-delay: 5s;"></div>
 
     <!-- NAVBAR -->
     <nav class="glass sticky top-0 z-50 px-4 sm:px-8">
-        <div class="max-w-7xl mx-auto flex justify-between items-center h-16">
-            <a href="/" class="text-2xl font-bold">TutorMatch</a>
-            <div class="flex items-center gap-3">
-                @auth
-                    <span class="hidden sm:inline text-white/90">Hola, {{ Auth::user()->nombre }}</span>
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-y-3 py-3 sm:h-16 sm:flex-nowrap sm:gap-x-4 sm:py-0">
+            <a href="/" class="shrink-0 text-xl sm:text-2xl font-bold font-display tracking-tight">TutorMatch</a>
+            <div class="sm:ml-auto">
+                @include('partials.language-switcher')
+            </div>
+
+            @auth
+                <div class="flex w-full items-center justify-center gap-3 sm:w-auto sm:justify-end">
+                    <span class="hidden sm:inline text-white/90">{{ __('ui.hello', ['name' => auth()->user()->nombre]) }}</span>
                     @php
-                        $rutaDash = Auth::user()->rol === 'administrador' ? 'admin.dashboard' :
-                                   (Auth::user()->rol === 'tutor' ? 'tutor.dashboard' : 'estudiante.dashboard');
+                        $rutaDash = auth()->user()->rol === 'administrador' ? 'admin.dashboard' :
+                                   (auth()->user()->rol === 'tutor' ? 'tutor.dashboard' : 'estudiante.dashboard');
                     @endphp
-                    <a href="{{ route($rutaDash) }}" class="btn-white px-5 py-2 rounded-xl font-bold text-sm">Mi Dashboard</a>
+                    <a href="{{ route($rutaDash) }}" class="btn-white whitespace-nowrap px-3 sm:px-5 py-2 rounded-xl font-bold text-sm">{{ __('ui.my_dashboard') }}</a>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
-                        <button type="submit" class="text-white/80 hover:text-white text-sm px-3">Salir</button>
+                        <button type="submit" class="whitespace-nowrap text-white/80 hover:text-white text-sm px-2 sm:px-3">{{ __('ui.sign_out_short') }}</button>
                     </form>
-                @else
-                    <a href="{{ route('login') }}" class="text-white/90 hover:text-white px-4 py-2 font-medium text-sm">Iniciar Sesión</a>
-                    <a href="{{ route('register') }}" class="btn-white px-5 py-2 rounded-xl font-bold text-sm">Registrarse</a>
-                @endauth
-            </div>
+                </div>
+            @endauth
+
+            @guest
+                <div class="flex w-full items-center gap-3 sm:w-auto sm:justify-end">
+                    <a href="{{ route('login') }}" class="flex-1 rounded-xl border border-white/30 bg-white/10 px-2 py-2 text-center font-medium text-xs text-white/90 hover:bg-white/20 sm:flex-none sm:border-0 sm:bg-transparent sm:px-4 sm:text-left sm:text-sm">{{ __('ui.sign_in') }}</a>
+                    <a href="{{ route('register') }}" class="btn-white flex-1 whitespace-nowrap px-2 py-2 text-center rounded-xl font-bold text-xs sm:flex-none sm:px-5 sm:text-sm">{{ __('ui.register') }}</a>
+                </div>
+            @endguest
         </div>
     </nav>
 
     <!-- HERO -->
-    <section class="relative max-w-7xl mx-auto px-4 sm:px-8 py-20 text-center">
-        <div class="glass rounded-3xl p-10 sm:p-16 relative z-10">
-            <span class="inline-block bg-white/20 px-4 py-1.5 rounded-full text-sm mb-6">
-                🎓 La plataforma #1 de tutorías en Perú
+    <section class="relative max-w-7xl mx-auto px-4 sm:px-8 py-12 sm:py-20 text-center">
+        <div class="glass rounded-3xl p-5 sm:p-16 relative z-10">
+            <span class="inline-flex items-center gap-2 bg-white/15 border border-white/20 px-4 py-1.5 rounded-full text-sm mb-6">
+                <x-icon name="graduation-cap" class="w-4 h-4" /> {{ __('ui.welcome_badge') }}
             </span>
-            <h1 class="text-4xl sm:text-6xl font-extrabold mb-6 leading-tight">
-                Encuentra al Tutor<br>
-                <span class="text-yellow-300">Perfecto</span> para ti
+            <h1 class="text-3xl sm:text-6xl font-extrabold mb-6 leading-tight">
+                {{ __('ui.welcome_hero_prefix') }}<br>
+                <span class="text-orange-300">{{ __('ui.welcome_hero_highlight') }}</span>
+                {{ __('ui.welcome_hero_suffix') }}
             </h1>
-            <p class="text-lg sm:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-                Clases particulares con universitarios destacados. Matemáticas, Inglés, Física, y mucho más.
+            <p class="text-base sm:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+                {{ __('ui.welcome_description') }}
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{{ route('register') }}" class="btn-white px-8 py-4 rounded-2xl font-bold text-lg">
-                    🎓 Comenzar como Estudiante
+                <a href="{{ route('register', ['rol' => 'estudiante']) }}" class="btn-white w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-4 rounded-2xl font-bold text-base sm:text-lg">
+                    <x-icon name="graduation-cap" class="w-5 h-5" /> {{ __('ui.start_as_student') }}
                 </a>
-                <a href="{{ route('register') }}" class="btn-yellow px-8 py-4 rounded-2xl font-bold text-lg">
-                    👨‍🏫 Ser Tutor
+                <a href="{{ route('register', ['rol' => 'tutor']) }}" class="btn-yellow w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-4 rounded-2xl font-bold text-base sm:text-lg">
+                    <x-icon name="user-check" class="w-5 h-5" /> {{ __('ui.become_tutor') }}
+                </a>
+                <a href="{{ route('busqueda.index') }}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-4 rounded-2xl border border-white/40 bg-white/10 hover:bg-white/20 font-bold text-base sm:text-lg transition">
+                    <x-icon name="search" class="w-5 h-5" /> {{ __('ui.search_tutors') }}
                 </a>
             </div>
         </div>
     </section>
 
     <!-- FEATURES -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-8 py-16 relative z-10">
-        <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">¿Por qué elegir TutorMatch?</h2>
+    <section class="max-w-7xl mx-auto px-4 sm:px-8 py-12 sm:py-16 relative z-10">
+        <h2 class="text-2xl sm:text-4xl font-bold text-center mb-8 sm:mb-12">{{ __('ui.why_tutormatch') }}</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass-card rounded-3xl p-8 text-center">
-                <div class="text-6xl mb-4">🔍</div>
-                <h3 class="text-xl font-bold mb-3">Búsqueda Inteligente</h3>
-                <p class="text-white/80">Encuentra tutores por materia, precio y calificación en segundos.</p>
+            <div class="glass-card rounded-3xl p-6 sm:p-8 text-center">
+                <div class="icon-chip mx-auto mb-4 !w-16 !h-16 rounded-2xl"><x-icon name="search" class="!w-7 !h-7" /></div>
+                <h3 class="text-xl font-bold mb-3">{{ __('ui.smart_search') }}</h3>
+                <p class="text-white/80">{{ __('ui.smart_search_description') }}</p>
             </div>
-            <div class="glass-card rounded-3xl p-8 text-center">
-                <div class="text-6xl mb-4">📹</div>
-                <h3 class="text-xl font-bold mb-3">Clases Virtuales</h3>
-                <p class="text-white/80">Videollamadas en vivo con Jitsi, sin descargar nada.</p>
+            <div class="glass-card rounded-3xl p-6 sm:p-8 text-center">
+                <div class="icon-chip mx-auto mb-4 !w-16 !h-16 rounded-2xl"><x-icon name="video" class="!w-7 !h-7" /></div>
+                <h3 class="text-xl font-bold mb-3">{{ __('ui.virtual_classes') }}</h3>
+                <p class="text-white/80">{{ __('ui.virtual_classes_description') }}</p>
             </div>
-            <div class="glass-card rounded-3xl p-8 text-center">
-                <div class="text-6xl mb-4">⭐</div>
-                <h3 class="text-xl font-bold mb-3">Tutores Verificados</h3>
-                <p class="text-white/80">Todos nuestros tutores pasan por un riguroso proceso de verificación.</p>
+            <div class="glass-card rounded-3xl p-6 sm:p-8 text-center">
+                <div class="icon-chip mx-auto mb-4 !w-16 !h-16 rounded-2xl"><x-icon name="badge-check" class="!w-7 !h-7" /></div>
+                <h3 class="text-xl font-bold mb-3">{{ __('ui.verified_tutors') }}</h3>
+                <p class="text-white/80">{{ __('ui.verified_tutors_description') }}</p>
             </div>
         </div>
     </section>
 
     <!-- FOOTER -->
     <footer class="glass mt-12 py-6 text-center text-white/70 text-sm">
-        &copy; {{ date('Y') }} TutorMatch — Todos los derechos reservados.
+        &copy; {{ date('Y') }} TutorMatch — {{ __('ui.all_rights_reserved') }}
     </footer>
 
-</body>
-</html>
+@endsection

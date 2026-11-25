@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Reservar Clase')
+@section('title', __('ui.reserve_class'))
 
 @section('content')
 <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Reservar Clase</h1>
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">{{ __('ui.reserve_class') }}</h1>
 
     <div class="bg-blue-50 p-4 rounded-lg mb-6">
         <p class="font-bold text-blue-800">
-            Tutor: {{ $tutor->user->nombre }} {{ $tutor->user->apellido }}
+            {{ __('ui.tutor') }}: {{ $tutor->user->nombre }} {{ $tutor->user->apellido }}
         </p>
-        <p class="text-blue-700">Precio: S/ {{ $tutor->precio_hora }} / hora</p>
-        <p class="text-blue-700">Comisión plataforma: {{ $comision }}%</p>
+        <p class="text-blue-700">{{ __('ui.price_label') }} S/ {{ $tutor->precio_hora }} / {{ __('ui.per_hour') }}</p>
+        <p class="text-blue-700">{{ __('ui.platform_commission') }} {{ $comision }}%</p>
     </div>
 
     @if ($errors->any())
@@ -29,7 +29,7 @@
         <input type="hidden" name="tutor_id" value="{{ $tutor->id }}">
 
         <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">Materia</label>
+            <label class="block text-gray-700 font-bold mb-2">{{ __('ui.subject') }}</label>
             <select name="materia_id" required class="w-full px-3 py-2 border rounded-md">
                 @foreach($tutor->materias as $m)
                     <option value="{{ $m->id }}" {{ $materiaSeleccionada && $materiaSeleccionada->id == $m->id ? 'selected' : '' }}>
@@ -40,7 +40,7 @@
         </div>
 
         <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">Fecha</label>
+            <label class="block text-gray-700 font-bold mb-2">{{ __('ui.date') }}</label>
             <input type="date" name="fecha" required id="input-fecha"
        value="{{ old('fecha') }}"
        class="w-full px-3 py-2 border rounded-md">
@@ -59,28 +59,28 @@
 
         <div class="grid grid-cols-2 gap-4 mb-4">
             <div>
-                <label class="block text-gray-700 font-bold mb-2">Hora de inicio</label>
+                <label class="block text-gray-700 font-bold mb-2">{{ __('ui.start_time_label') }}</label>
                 <input type="time" name="hora_inicio" required value="{{ old('hora_inicio') }}"
                        class="w-full px-3 py-2 border rounded-md">
             </div>
             <div>
-                <label class="block text-gray-700 font-bold mb-2">Duración</label>
+                <label class="block text-gray-700 font-bold mb-2">{{ __('ui.duration') }}</label>
                 <select name="duracion_min" required class="w-full px-3 py-2 border rounded-md">
-                    <option value="60">1 hora</option>
-                    <option value="90">1.5 horas</option>
-                    <option value="120">2 horas</option>
+                    <option value="60">{{ __('ui.one_hour') }}</option>
+                    <option value="90">{{ __('ui.one_and_half_hours') }}</option>
+                    <option value="120">{{ __('ui.two_hours') }}</option>
                 </select>
             </div>
         </div>
 
         <div class="bg-yellow-50 p-4 rounded-lg mb-6">
             <p class="text-sm text-yellow-800">
-                ℹ️ El precio final se calculará automáticamente según la duración y el precio/hora del tutor.
+                ℹ️ {{ __('ui.final_price_calculated') }}
             </p>
         </div>
 
         <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 font-bold">
-            Continuar al Pago
+            {{ __('ui.continue_to_payment') }}
         </button>
     </form>
 </div>

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pago extends Model
 {
@@ -18,12 +19,12 @@ class Pago extends Model
         'pagado_en' => 'datetime',
     ];
 
-    public function clase()
+    public function clase(): BelongsTo
     {
         return $this->belongsTo(Clase::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

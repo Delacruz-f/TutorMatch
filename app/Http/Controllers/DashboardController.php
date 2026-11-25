@@ -10,7 +10,7 @@ class DashboardController extends Controller
 {
     $user = \Illuminate\Support\Facades\Auth::user();
 
-    $clases = \App\Models\Clase::with(['tutor.user', 'materia', 'pago', 'resena'])
+    $clases = \App\Models\Clase::with(['estudiante', 'tutor.user', 'materia', 'pago', 'resena'])
         ->where('estudiante_id', $user->id)
         ->orderByDesc('fecha')
         ->orderByDesc('hora_inicio')
